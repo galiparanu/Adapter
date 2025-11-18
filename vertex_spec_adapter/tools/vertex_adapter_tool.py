@@ -31,7 +31,8 @@ class VertexAdapterTool:
         self.config_manager = ConfigurationManager(
             config_path=Path(config_path) if config_path else None
         )
-        self._client: Optional[VertexAIClient] = None
+        # REMOVED: Client caching to ensure always using latest config
+        # self._client: Optional[VertexAIClient] = None
         self._model_registry = ModelRegistry()
         
         logger.info("VertexAdapterTool initialized", config_path=config_path)
@@ -109,40 +110,52 @@ class VertexAdapterTool:
         """
         Get or create VertexAIClient instance.
         
+        ALWAYS creates a fresh client from the latest config to ensure model selection
+        is always up-to-date, even if tool instance is cached by Gemini CLI.
+        
         Args:
-            model_id: Optional model ID to use
-            region: Optional region to use
+            model_id: Optional model ID to use (overrides config)
+            region: Optional region to use (overrides config)
         
         Returns:
-            Configured VertexAIClient
+            Fresh VertexAIClient instance with latest config
         """
         try:
-            config = self.config_manager.load_config()
+            # Always reload config to get latest model selection
+            config = self.config_manager.reload()
         except ConfigurationError:
             raise ConfigurationError(
                 "Configuration not found. Run 'vertex-spec init' or create .specify/config.yaml"
             )
         
         # Use provided model/region or config defaults
-        use_model_id = model_id or config.model.id if config.model else "gemini-2-5-pro"
+        use_model_id = model_id or config.model if config.model else "gemini-2-5-pro"
         use_region = region or config.region or "us-central1"
         
-        # Create new client if model/region changed
-        if (
-            self._client is None
-            or self._client.model_id != use_model_id
-            or self._client.region != use_region
-        ):
-            self._client = VertexAIClient(
-                project_id=config.project_id,
-                region=use_region,
-                model_id=use_model_id,
-                model_version=config.model.version if config.model else None,
-                config=config,
-            )
-            logger.info("Client created/updated", model=use_model_id, region=use_region)
+        # ALWAYS create a fresh client - no caching to ensure latest model is used
+        # This is critical when Gemini CLI caches tool instances
+        from vertex_spec_adapter.core.auth import AuthenticationManager
         
-        return self._client
+        auth_manager = AuthenticationManager(config=config)
+        credentials = auth_manager.authenticate(auth_method=config.auth_method)
+        
+        client = VertexAIClient(
+            project_id=config.project_id,
+            region=use_region,
+            model_id=use_model_id,
+            model_version=config.model_version,
+            credentials=credentials,
+            config=config,
+        )
+        
+        logger.info(
+            "Fresh client created from latest config",
+            model=use_model_id,
+            region=use_region,
+            config_model=config.model,
+        )
+        
+        return client
     
     def execute(self, action: str, **kwargs) -> Dict[str, Any]:
         """
@@ -325,11 +338,32 @@ def create_tool(config_path: Optional[str] = None) -> VertexAdapterTool:
     """
     Factory function untuk create VertexAdapterTool.
     
+    Always creates a fresh instance to ensure latest config is used.
+    
     Args:
         config_path: Optional path to config file
     
     Returns:
-        Configured VertexAdapterTool instance
+        Fresh VertexAdapterTool instance
     """
     return VertexAdapterTool(config_path=config_path)
+
+
+def execute_tool_action(action: str, **kwargs) -> Dict[str, Any]:
+    """
+    Static wrapper for tool execution that always uses fresh instance.
+    
+    This ensures that even if Gemini CLI caches tool instances, we always
+    use the latest config and create fresh clients.
+    
+    Args:
+        action: Action to perform
+        **kwargs: Action-specific parameters
+    
+    Returns:
+        Result dictionary
+    """
+    # Always create fresh tool instance
+    tool = create_tool()
+    return tool.execute(action, **kwargs)
 
