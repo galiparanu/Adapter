@@ -56,7 +56,7 @@ class ModelInteractiveMenu:
         try:
             config = self.config_manager.load_config()
             project_id = config.project_id
-            self.current_model_id = config.model.id if config.model else None
+            self.current_model_id = config.model if config.model else None
         except ConfigurationError:
             # Use defaults if config not available
             project_id = "default-project"
@@ -122,7 +122,7 @@ class ModelInteractiveMenu:
         try:
             config = self.config_manager.load_config()
             if config.model:
-                return config.model.id
+                return config.model
         except ConfigurationError:
             pass
         return None
@@ -774,8 +774,8 @@ class ModelInteractiveMenu:
                     )
                 
                 # Initialize authentication
-                auth_manager = AuthenticationManager()
-                credentials = auth_manager.get_credentials(config.auth_method)
+                auth_manager = AuthenticationManager(config=config)
+                credentials = auth_manager.authenticate(auth_method=config.auth_method)
                 
                 # Create or update client
                 client = VertexAIClient(
@@ -790,8 +790,12 @@ class ModelInteractiveMenu:
                 # Update configuration (T024: Configuration Update)
                 config.model = model_id
                 config.region = region
-                if metadata.latest_version:
+                # Only set model_version if it's a valid format (starts with @)
+                # "latest" is not a valid format, so set to None
+                if metadata.latest_version and metadata.latest_version.startswith("@"):
                     config.model_version = metadata.latest_version
+                else:
+                    config.model_version = None
                 
                 # Save configuration (T025: Selection Persistence)
                 try:

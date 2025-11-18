@@ -37,11 +37,12 @@ def register_tool_to_gemini_cli(
         config = {"tools": []}
     
     # Add tool if not already registered
+    # Use static wrapper to ensure fresh instance on every call
     tool_config = {
         "name": tool.name,
         "type": "function",
         "schema": tool.schema,
-        "handler": "vertex_spec_adapter.tools.vertex_adapter_tool:VertexAdapterTool.execute",
+        "handler": "vertex_spec_adapter.tools.vertex_adapter_tool:execute_tool_action",
     }
     
     # Check if already registered

@@ -1,0 +1,6 @@
+description = "Directly inject Vertex AI model from config (bypass adapter)"
+prompt = """
+Read model from .specify/config.yaml and inject directly:
+!{python -m vertex_spec_adapter.gemini_cli.model_inject}
+"""
+
