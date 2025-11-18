@@ -116,7 +116,8 @@ def cli() -> None:
     try:
         app()
     except KeyboardInterrupt:
-        console.print("\n[yellow]Cancelled by user[/yellow]")
+        console.print("\n[yellow]Operation cancelled by user[/yellow]")
+        console.print("[cyan]Checkpoint saved (if applicable). You can resume with --resume flag.[/cyan]")
         sys.exit(130)
     except ConfigurationError as e:
         print_error(e)

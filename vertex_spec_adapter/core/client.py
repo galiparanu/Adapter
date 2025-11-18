@@ -16,7 +16,7 @@ from vertex_spec_adapter.schemas.api import APIResponse, Message, ModelRequest
 from vertex_spec_adapter.schemas.config import VertexConfig
 from vertex_spec_adapter.utils.logging import get_logger, log_api_call
 from vertex_spec_adapter.utils.metrics import UsageTracker
-from vertex_spec_adapter.utils.retry import retry_with_backoff
+from vertex_spec_adapter.utils.retry import CircuitBreaker, retry_with_backoff
 
 logger = get_logger(__name__)
 
@@ -91,6 +91,14 @@ class VertexAIClient:
         
         # Initialize model-specific client
         self._model_client = self._initialize_model_client()
+        
+        # Initialize circuit breaker
+        failure_threshold = config.max_retries if config else 5
+        self.circuit_breaker = CircuitBreaker(
+            failure_threshold=failure_threshold,
+            recovery_timeout=60,
+            expected_exception=APIError,
+        )
         
         # Token usage tracking
         self._token_usage = {
@@ -285,15 +293,19 @@ class VertexAIClient:
             if temperature is None and self.config:
                 temperature = 1.0  # Default
             
-            # Generate based on model type
-            if self._model_client["type"] == "claude":
-                response = self._generate_claude(normalized_messages, temperature, max_tokens)
-            elif self._model_client["type"] == "gemini":
-                response = self._generate_gemini(normalized_messages, temperature, max_tokens)
-            elif self._model_client["type"] == "qwen":
-                response = self._generate_qwen(normalized_messages, temperature, max_tokens)
-            else:
-                raise APIError(f"Unsupported model type: {self._model_client['type']}")
+            # Generate with circuit breaker protection
+            def _generate():
+                if self._model_client["type"] == "claude":
+                    return self._generate_claude(normalized_messages, temperature, max_tokens)
+                elif self._model_client["type"] == "gemini":
+                    return self._generate_gemini(normalized_messages, temperature, max_tokens)
+                elif self._model_client["type"] == "qwen":
+                    return self._generate_qwen(normalized_messages, temperature, max_tokens)
+                else:
+                    raise APIError(f"Unsupported model type: {self._model_client['type']}")
+            
+            # Execute with circuit breaker
+            response = self.circuit_breaker.call(_generate)
             
             # Calculate latency
             latency_ms = (time.time() - start_time) * 1000

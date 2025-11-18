@@ -1,0 +1,39 @@
+# Claude 4.5 Sonnet Configuration Example
+# Optimized for Anthropic's Claude model on Vertex AI
+
+project_id: "your-gcp-project-id"
+region: "us-east5"  # Claude's default region
+
+# Claude model configuration
+model:
+  id: "claude-4-5-sonnet"
+  version: "@20250929"  # Pin to specific version for stability
+
+# Authentication
+authentication:
+  method: "service_account"  # Recommended for production
+  credentials_path: "/path/to/service-account.json"
+
+# Retry settings optimized for Claude
+retry:
+  max_retries: 5
+  initial_wait: 2.0
+  max_wait: 120.0
+  exponential_base: 2.0
+  circuit_breaker:
+    failure_threshold: 5
+    recovery_timeout: 60
+
+# Logging
+logging:
+  level: "INFO"
+  format: "json"  # JSON format for better log aggregation
+  # file: "/var/log/vertex-spec-claude.log"  # Optional log file
+
+# Notes:
+# - Claude uses Native SDK access pattern
+# - Default region: us-east5, also available in europe-west1
+# - Version format: @YYYYMMDD
+# - Context window: 200,000 tokens
+# - Cost: $3.00 per 1M input tokens, $15.00 per 1M output tokens
+

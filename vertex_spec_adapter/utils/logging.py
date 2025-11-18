@@ -62,7 +62,8 @@ def sanitize_log_data(data: Any) -> Any:
 def configure_logging(
     log_level: str = "INFO",
     log_format: str = "text",
-    log_file: Optional[str] = None
+    log_file: Optional[str] = None,
+    debug: bool = False,
 ) -> None:
     """
     Configure structured logging with structlog.
@@ -71,7 +72,12 @@ def configure_logging(
         log_level: Logging level (DEBUG, INFO, WARNING, ERROR)
         log_format: Output format ('json' or 'text')
         log_file: Optional path to log file (stdout if None)
+        debug: Enable debug mode with detailed diagnostics
     """
+    # Override log level if debug mode
+    if debug:
+        log_level = "DEBUG"
+    
     # Convert string level to logging constant
     level = getattr(logging, log_level.upper(), logging.INFO)
     
@@ -82,6 +88,17 @@ def configure_logging(
         structlog.processors.StackInfoRenderer(),
         structlog.processors.format_exc_info,
     ]
+    
+    # Add debug-specific processors
+    if debug:
+        processors.insert(1, structlog.processors.add_logger_name)
+        processors.insert(2, structlog.processors.CallsiteParameterAdder(
+            parameters=[
+                structlog.processors.CallsiteParameter.FILENAME,
+                structlog.processors.CallsiteParameter.LINENO,
+                structlog.processors.CallsiteParameter.FUNC_NAME,
+            ]
+        ))
     
     if log_format == "json":
         processors.extend([
@@ -102,6 +119,10 @@ def configure_logging(
         logger_factory=structlog.PrintLoggerFactory(),
         cache_logger_on_first_use=True,
     )
+    
+    if debug:
+        logger = get_logger(__name__)
+        logger.debug("Debug mode enabled with detailed diagnostics")
 
 
 def get_logger(name: Optional[str] = None) -> structlog.BoundLogger:

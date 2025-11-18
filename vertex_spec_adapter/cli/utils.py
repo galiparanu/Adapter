@@ -1,6 +1,6 @@
 """CLI utilities for formatting, error messages, and progress indicators."""
 
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 from rich.console import Console
 from rich.panel import Panel
@@ -12,25 +12,36 @@ from vertex_spec_adapter.core.exceptions import VertexSpecAdapterError
 console = Console()
 
 
-def format_error(error: Exception, include_suggestion: bool = True) -> str:
+def format_error(error: Exception, include_suggestion: bool = True, context: Optional[Dict] = None) -> str:
     """
-    Format error message with suggestions.
+    Format error message with context and troubleshooting steps.
     
     Args:
         error: Exception to format
         include_suggestion: Whether to include suggested fixes
+        context: Optional context dictionary with additional information
         
     Returns:
-        Formatted error message
+        Formatted error message with troubleshooting steps
     """
-    if isinstance(error, VertexSpecAdapterError):
-        message = str(error)
-        if include_suggestion and hasattr(error, "suggested_fix") and error.suggested_fix:
-            message += f"\n  → {error.suggested_fix}"
-        return message
+    message = str(error)
     
-    # Generic error formatting
-    return str(error)
+    # Add context if available
+    if context:
+        context_str = ", ".join(f"{k}={v}" for k, v in context.items())
+        message = f"{message}\n  Context: {context_str}"
+    
+    # Add troubleshooting steps if available
+    if hasattr(error, 'troubleshooting_steps') and error.troubleshooting_steps:
+        message += "\n\nTroubleshooting steps:"
+        for i, step in enumerate(error.troubleshooting_steps, 1):
+            message += f"\n  {i}. {step}"
+    
+    # Add suggested fix if available
+    if include_suggestion and hasattr(error, "suggested_fix") and error.suggested_fix:
+        message += f"\n\n  → Suggested fix: {error.suggested_fix}"
+    
+    return message
 
 
 def print_error(error: Exception, include_suggestion: bool = True) -> None:

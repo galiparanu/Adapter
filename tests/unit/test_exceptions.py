@@ -91,6 +91,47 @@ class TestAPIError:
         """Test API error with retry_after."""
         error = APIError("Rate limited", retry_after=5)
         assert error.retry_after == 5
+    
+    def test_api_error_auto_generates_troubleshooting_steps(self):
+        """Test that APIError auto-generates troubleshooting steps."""
+        error = APIError("Unauthorized", status_code=401)
+        assert len(error.troubleshooting_steps) > 0
+        assert "credentials" in error.troubleshooting_steps[0].lower()
+    
+    def test_api_error_with_custom_troubleshooting_steps(self):
+        """Test APIError with custom troubleshooting steps."""
+        steps = ["Step 1", "Step 2"]
+        error = APIError("Error", status_code=500, troubleshooting_steps=steps)
+        assert error.troubleshooting_steps == steps
+    
+    def test_api_error_formatted_message_includes_troubleshooting(self):
+        """Test that formatted error message includes troubleshooting steps."""
+        error = APIError("Error", status_code=401)
+        message = str(error)
+        assert "Troubleshooting steps:" in message
+        assert any("credential" in step.lower() for step in error.troubleshooting_steps)
+    
+    def test_api_error_troubleshooting_for_different_status_codes(self):
+        """Test troubleshooting steps for different status codes."""
+        # 403 error
+        error_403 = APIError("Forbidden", status_code=403)
+        assert len(error_403.troubleshooting_steps) > 0
+        assert any("permission" in step.lower() or "role" in step.lower() for step in error_403.troubleshooting_steps)
+        
+        # 404 error
+        error_404 = APIError("Not found", status_code=404)
+        assert len(error_404.troubleshooting_steps) > 0
+        assert any("model" in step.lower() for step in error_404.troubleshooting_steps)
+        
+        # 429 error
+        error_429 = APIError("Rate limit", status_code=429)
+        assert len(error_429.troubleshooting_steps) > 0
+        assert any("wait" in step.lower() or "quota" in step.lower() for step in error_429.troubleshooting_steps)
+        
+        # 500 error
+        error_500 = APIError("Server error", status_code=500)
+        assert len(error_500.troubleshooting_steps) > 0
+        assert any("temporary" in step.lower() or "retry" in step.lower() for step in error_500.troubleshooting_steps)
 
 
 class TestModelNotFoundError:

@@ -40,7 +40,7 @@ jobs:
 
       - name: Run unit tests
         run: |
-          pytest tests/unit -v --cov=vertex_spec_adapter --cov-report=xml --cov-report=term
+          pytest tests/unit -v --cov=vertex_spec_adapter --cov-report=xml --cov-report=term --cov-report=html
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
@@ -49,6 +49,10 @@ jobs:
           flags: unittests
           name: codecov-umbrella
           fail_ci_if_error: false
+
+      - name: Coverage threshold check
+        run: |
+          coverage report --fail-under=80
 
   integration:
     runs-on: ubuntu-latest
@@ -98,15 +102,22 @@ jobs:
           python -m pip install --upgrade pip
           pip install bandit safety
 
-      - name: Run security scan
+      - name: Run security scan with bandit
         run: |
-          bandit -r vertex_spec_adapter -f json -o bandit-report.json || true
+          bandit -r vertex_spec_adapter -f json -o bandit-report.json -ll || true
+          bandit -r vertex_spec_adapter -ll || true
+
+      - name: Run safety check
+        run: |
+          safety check --json --output safety-report.json || true
           safety check || true
 
-      - name: Upload security report
+      - name: Upload security reports
         uses: actions/upload-artifact@v3
         with:
-          name: security-report
-          path: bandit-report.json
+          name: security-reports
+          path: |
+            bandit-report.json
+            safety-report.json
         if: always()
 

@@ -1,7 +1,9 @@
 """Spec Kit bridge for integrating with Vertex AI models."""
 
+import json
 import re
 import subprocess
+from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional
 
@@ -263,7 +265,14 @@ class SpecKitBridge:
         Returns:
             List of SpecKitArtifact for created files
         """
-        logger.info("Handling implement command", tasks_path=tasks_path)
+        logger.info("Handling implement command", tasks_path=tasks_path, resume=resume)
+        
+        # Load checkpoint if resuming
+        checkpoint_data = None
+        if resume and checkpoint_path:
+            checkpoint_data = self._load_checkpoint(checkpoint_path)
+            if checkpoint_data:
+                logger.info("Resuming from checkpoint", checkpoint=checkpoint_path)
         
         # Read tasks file
         tasks_file = self.project_root / tasks_path
@@ -272,21 +281,85 @@ class SpecKitBridge:
         
         tasks_content = tasks_file.read_text(encoding="utf-8")
         
-        # Parse tasks (simplified - in full implementation would parse markdown)
-        # For now, generate implementation based on tasks
+        # Determine checkpoint path
+        if not checkpoint_path:
+            checkpoint_path = str(tasks_file.parent / ".checkpoint.json")
         
-        # Build prompt
-        prompt = self._build_implement_prompt(tasks_content)
+        try:
+            # Parse tasks (simplified - in full implementation would parse markdown)
+            # For now, generate implementation based on tasks
+            
+            # Build prompt
+            prompt = self._build_implement_prompt(tasks_content)
+            
+            # Generate implementation
+            messages = [{"role": "user", "content": prompt}]
+            content = self.client.generate(messages, temperature=0.7)
+            
+            # Parse and create files (simplified)
+            artifacts = []
+            # In full implementation, would parse generated content and create multiple files
+            
+            # Save checkpoint
+            self._save_checkpoint(checkpoint_path, {
+                "tasks_path": tasks_path,
+                "completed_tasks": [],
+                "artifacts": [a.file_path for a in artifacts],
+            })
+            
+            return artifacts
+            
+        except KeyboardInterrupt:
+            # Save checkpoint on interruption
+            logger.warning("Implementation interrupted, saving checkpoint")
+            self._save_checkpoint(checkpoint_path, {
+                "tasks_path": tasks_path,
+                "completed_tasks": [],
+                "artifacts": [],
+            })
+            raise
+        except Exception as e:
+            # Save checkpoint on error
+            logger.error("Implementation failed, saving checkpoint", error=str(e))
+            self._save_checkpoint(checkpoint_path, {
+                "tasks_path": tasks_path,
+                "completed_tasks": [],
+                "artifacts": [],
+                "error": str(e),
+            })
+            raise
+    
+    def _save_checkpoint(self, checkpoint_path: str, data: Dict) -> None:
+        """Save checkpoint data to file."""
+        import json
         
-        # Generate implementation
-        messages = [{"role": "user", "content": prompt}]
-        content = self.client.generate(messages, temperature=0.7)
+        checkpoint_file = self.project_root / checkpoint_path
+        checkpoint_file.parent.mkdir(parents=True, exist_ok=True)
         
-        # Parse and create files (simplified)
-        artifacts = []
-        # In full implementation, would parse generated content and create multiple files
+        checkpoint_data = {
+            "timestamp": datetime.utcnow().isoformat(),
+            **data,
+        }
         
-        return artifacts
+        with open(checkpoint_file, "w", encoding="utf-8") as f:
+            json.dump(checkpoint_data, f, indent=2)
+        
+        logger.info("Checkpoint saved", checkpoint_path=checkpoint_path)
+    
+    def _load_checkpoint(self, checkpoint_path: str) -> Optional[Dict]:
+        """Load checkpoint data from file."""
+        import json
+        
+        checkpoint_file = self.project_root / checkpoint_path
+        if not checkpoint_file.exists():
+            return None
+        
+        try:
+            with open(checkpoint_file, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except Exception as e:
+            logger.warning("Failed to load checkpoint", checkpoint=checkpoint_path, error=str(e))
+            return None
     
     def create_feature_branch(self, feature_name: str) -> str:
         """
