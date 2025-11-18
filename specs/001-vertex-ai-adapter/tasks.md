@@ -57,31 +57,31 @@
 
 **Purpose**: Core infrastructure required by all user stories
 
-- [ ] T011 Create custom exception hierarchy in vertex_spec_adapter/core/exceptions.py
-- [ ] T012 [P] Create VertexSpecAdapterError base exception in vertex_spec_adapter/core/exceptions.py
-- [ ] T013 [P] Create AuthenticationError exception in vertex_spec_adapter/core/exceptions.py
-- [ ] T014 [P] Create ConfigurationError exception in vertex_spec_adapter/core/exceptions.py
-- [ ] T015 [P] Create APIError exception with status_code and retry_after in vertex_spec_adapter/core/exceptions.py
-- [ ] T016 [P] Create ModelNotFoundError exception in vertex_spec_adapter/core/exceptions.py
-- [ ] T017 [P] Create QuotaExceededError exception in vertex_spec_adapter/core/exceptions.py
-- [ ] T018 [P] Create RateLimitError exception in vertex_spec_adapter/core/exceptions.py
-- [ ] T019 Create Pydantic schema for Configuration entity in vertex_spec_adapter/schemas/config.py
-- [ ] T020 [P] Add project_id field with validation regex in vertex_spec_adapter/schemas/config.py
-- [ ] T021 [P] Add region field with validation in vertex_spec_adapter/schemas/config.py
-- [ ] T022 [P] Add model and model_version fields with validation in vertex_spec_adapter/schemas/config.py
-- [ ] T023 [P] Add model_regions dict field for overrides in vertex_spec_adapter/schemas/config.py
-- [ ] T024 [P] Add auth_method enum field in vertex_spec_adapter/schemas/config.py
-- [ ] T025 [P] Add retry and timeout configuration fields in vertex_spec_adapter/schemas/config.py
-- [ ] T026 [P] Add logging configuration fields in vertex_spec_adapter/schemas/config.py
-- [ ] T027 Create Pydantic schema for API request/response in vertex_spec_adapter/schemas/api.py
-- [ ] T028 [P] Add ModelRequest schema with validation in vertex_spec_adapter/schemas/api.py
-- [ ] T029 [P] Add APIResponse schema with normalization in vertex_spec_adapter/schemas/api.py
-- [ ] T030 Create logging configuration module in vertex_spec_adapter/utils/logging.py
-- [ ] T031 [P] Configure structlog with JSON and text formats in vertex_spec_adapter/utils/logging.py
-- [ ] T032 [P] Implement log sanitization function to remove sensitive data in vertex_spec_adapter/utils/logging.py
-- [ ] T033 [P] Create unit tests for exceptions in tests/unit/test_exceptions.py
-- [ ] T034 [P] Create unit tests for config schema in tests/unit/test_config_schema.py
-- [ ] T035 [P] Create unit tests for API schemas in tests/unit/test_api_schema.py
+- [x] T011 Create custom exception hierarchy in vertex_spec_adapter/core/exceptions.py
+- [x] T012 [P] Create VertexSpecAdapterError base exception in vertex_spec_adapter/core/exceptions.py
+- [x] T013 [P] Create AuthenticationError exception in vertex_spec_adapter/core/exceptions.py
+- [x] T014 [P] Create ConfigurationError exception in vertex_spec_adapter/core/exceptions.py
+- [x] T015 [P] Create APIError exception with status_code and retry_after in vertex_spec_adapter/core/exceptions.py
+- [x] T016 [P] Create ModelNotFoundError exception in vertex_spec_adapter/core/exceptions.py
+- [x] T017 [P] Create QuotaExceededError exception in vertex_spec_adapter/core/exceptions.py
+- [x] T018 [P] Create RateLimitError exception in vertex_spec_adapter/core/exceptions.py
+- [x] T019 Create Pydantic schema for Configuration entity in vertex_spec_adapter/schemas/config.py
+- [x] T020 [P] Add project_id field with validation regex in vertex_spec_adapter/schemas/config.py
+- [x] T021 [P] Add region field with validation in vertex_spec_adapter/schemas/config.py
+- [x] T022 [P] Add model and model_version fields with validation in vertex_spec_adapter/schemas/config.py
+- [x] T023 [P] Add model_regions dict field for overrides in vertex_spec_adapter/schemas/config.py
+- [x] T024 [P] Add auth_method enum field in vertex_spec_adapter/schemas/config.py
+- [x] T025 [P] Add retry and timeout configuration fields in vertex_spec_adapter/schemas/config.py
+- [x] T026 [P] Add logging configuration fields in vertex_spec_adapter/schemas/config.py
+- [x] T027 Create Pydantic schema for API request/response in vertex_spec_adapter/schemas/api.py
+- [x] T028 [P] Add ModelRequest schema with validation in vertex_spec_adapter/schemas/api.py
+- [x] T029 [P] Add APIResponse schema with normalization in vertex_spec_adapter/schemas/api.py
+- [x] T030 Create logging configuration module in vertex_spec_adapter/utils/logging.py
+- [x] T031 [P] Configure structlog with JSON and text formats in vertex_spec_adapter/utils/logging.py
+- [x] T032 [P] Implement log sanitization function to remove sensitive data in vertex_spec_adapter/utils/logging.py
+- [x] T033 [P] Create unit tests for exceptions in tests/unit/test_exceptions.py
+- [x] T034 [P] Create unit tests for config schema in tests/unit/test_config_schema.py
+- [x] T035 [P] Create unit tests for API schemas in tests/unit/test_api_schema.py
 
 ## Phase 3: User Story 1 - Quick Setup for GCP Credit Users (P1)
 
