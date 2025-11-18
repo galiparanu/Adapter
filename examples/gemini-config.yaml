@@ -1,0 +1,39 @@
+# Gemini 2.5 Pro Configuration Example
+# Optimized for Google's Gemini model on Vertex AI
+
+project_id: "your-gcp-project-id"
+region: "us-central1"  # Gemini's default region
+
+# Gemini model configuration
+model:
+  id: "gemini-2-5-pro"
+  version: "latest"  # Use latest version (or specify specific version)
+
+# Authentication
+authentication:
+  method: "service_account"  # Recommended for production
+  credentials_path: "/path/to/service-account.json"
+
+# Retry settings optimized for Gemini
+retry:
+  max_retries: 3
+  initial_wait: 1.0
+  max_wait: 60.0
+  exponential_base: 2.0
+  circuit_breaker:
+    failure_threshold: 5
+    recovery_timeout: 60
+
+# Logging
+logging:
+  level: "INFO"
+  format: "json"  # JSON format for better log aggregation
+  # file: "/var/log/vertex-spec-gemini.log"  # Optional log file
+
+# Notes:
+# - Gemini uses Native SDK access pattern
+# - Default region: us-central1, also available in asia-southeast1
+# - Version format: latest or specific version string
+# - Context window: 1,000,000 tokens (largest available)
+# - Cost: $3.50 per 1M input tokens, $10.50 per 1M output tokens
+

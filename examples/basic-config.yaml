@@ -1,0 +1,27 @@
+# Basic Configuration Example
+# Copy this to .specify/config.yaml and customize for your project
+
+project_id: "your-gcp-project-id"
+region: "us-central1"
+
+# Model configuration
+model:
+  id: "claude-4-5-sonnet"  # Options: claude-4-5-sonnet, gemini-2-5-pro, qwen-coder
+  # version: "@20250929"   # Optional: specify version, omit to use latest
+
+# Authentication
+authentication:
+  method: "user_credentials"  # Options: service_account, user_credentials, adc
+  # credentials_path: "/path/to/service-account.json"  # Required if method=service_account
+
+# Retry settings (optional)
+retry:
+  max_retries: 3
+  initial_wait: 1.0
+  max_wait: 60.0
+
+# Logging (optional)
+logging:
+  level: "INFO"  # Options: DEBUG, INFO, WARNING, ERROR
+  format: "text"  # Options: text, json
+

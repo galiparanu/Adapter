@@ -1,0 +1,103 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environments
+.venv/
+venv/
+ENV/
+env/
+.conda/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Testing
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+.hypothesis/
+.pytest_cache/
+*.cover
+*.log
+.cache
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+*.env
+
+# Credentials and secrets
+*.json
+!package.json
+!package-lock.json
+!tsconfig.json
+credentials.json
+service-account*.json
+*-key.json
+*.pem
+*.key
+
+# VCR cassettes (can be large)
+tests/fixtures/vcr_cassettes/*.yaml
+!tests/fixtures/vcr_cassettes/.gitkeep
+
+# Project specific
+.specify/
+specs/
+*.pyc
+*.pyo
+
+# OS
+.DS_Store
+Thumbs.db
+*.tmp
+*.swp
+*.bak
+
+# Logs
+*.log
+logs/
+
+# Type checking
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+
