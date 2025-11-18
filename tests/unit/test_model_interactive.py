@@ -350,3 +350,181 @@ class TestModelInteractiveMenuCurrentModel:
         
         assert current is None
 
+
+class TestModelInteractiveMenuModelSwitching:
+    """Test model switching functionality."""
+    
+    @patch('vertex_spec_adapter.cli.commands.model_interactive.AuthenticationManager')
+    @patch('vertex_spec_adapter.cli.commands.model_interactive.VertexAIClient')
+    @patch('vertex_spec_adapter.cli.commands.model_interactive.ConfigurationManager')
+    @patch('vertex_spec_adapter.cli.commands.model_interactive.ModelRegistry')
+    def test_switch_model_success(self, mock_registry, mock_config_manager, mock_client, mock_auth):
+        """Test successful model switch."""
+        # Setup mocks
+        mock_config = Mock()
+        mock_config.project_id = "test-project"
+        mock_config.model = "old-model"
+        mock_config.region = "us-central1"
+        mock_config.auth_method = "auto"
+        mock_config_manager.return_value.load_config.return_value = mock_config
+        mock_config_manager.return_value.save_config = Mock()
+        
+        mock_metadata = Mock()
+        mock_metadata.model_id = "new-model"
+        mock_metadata.name = "New Model"
+        mock_metadata.default_region = "us-west2"
+        mock_metadata.available_regions = ["us-west2"]
+        mock_metadata.latest_version = "latest"
+        
+        mock_registry_instance = Mock()
+        mock_registry_instance.get_model_metadata.return_value = mock_metadata
+        mock_registry_instance.validate_model_availability.return_value = True
+        mock_registry.return_value = mock_registry_instance
+        
+        mock_auth_instance = Mock()
+        mock_auth_instance.get_credentials.return_value = Mock()
+        mock_auth.return_value = mock_auth_instance
+        
+        mock_client_instance = Mock()
+        mock_client.return_value = mock_client_instance
+        
+        # Create menu
+        menu = ModelInteractiveMenu()
+        
+        # Switch model
+        success, message = menu._switch_model("new-model")
+        
+        assert success is True
+        assert "Successfully switched" in message
+        assert "New Model" in message
+        mock_config_manager.return_value.save_config.assert_called_once()
+    
+    @patch('vertex_spec_adapter.cli.commands.model_interactive.ConfigurationManager')
+    @patch('vertex_spec_adapter.cli.commands.model_interactive.ModelRegistry')
+    def test_switch_model_not_found(self, mock_registry, mock_config_manager):
+        """Test model switch with invalid model ID."""
+        mock_config = Mock()
+        mock_config_manager.return_value.load_config.return_value = mock_config
+        
+        mock_registry_instance = Mock()
+        mock_registry_instance.get_model_metadata.return_value = None
+        mock_registry.return_value = mock_registry_instance
+        
+        menu = ModelInteractiveMenu()
+        
+        success, message = menu._switch_model("invalid-model")
+        
+        assert success is False
+        assert "not found" in message.lower()
+    
+    @patch('vertex_spec_adapter.cli.commands.model_interactive.AuthenticationManager')
+    @patch('vertex_spec_adapter.cli.commands.model_interactive.ConfigurationManager')
+    @patch('vertex_spec_adapter.cli.commands.model_interactive.ModelRegistry')
+    def test_switch_model_auth_error(self, mock_registry, mock_config_manager, mock_auth):
+        """Test model switch with authentication error."""
+        from vertex_spec_adapter.core.exceptions import AuthenticationError
+        
+        mock_config = Mock()
+        mock_config.project_id = "test-project"
+        mock_config.model = "old-model"
+        mock_config.region = "us-central1"
+        mock_config.auth_method = "auto"
+        mock_config_manager.return_value.load_config.return_value = mock_config
+        
+        mock_metadata = Mock()
+        mock_metadata.default_region = "us-west2"
+        mock_metadata.available_regions = ["us-west2"]
+        mock_metadata.latest_version = "latest"
+        
+        mock_registry_instance = Mock()
+        mock_registry_instance.get_model_metadata.return_value = mock_metadata
+        mock_registry_instance.validate_model_availability.return_value = True
+        mock_registry.return_value = mock_registry_instance
+        
+        mock_auth_instance = Mock()
+        mock_auth_instance.get_credentials.side_effect = AuthenticationError("Auth failed")
+        mock_auth.return_value = mock_auth_instance
+        
+        menu = ModelInteractiveMenu()
+        
+        success, message = menu._switch_model("new-model")
+        
+        assert success is False
+        assert "Authentication failed" in message
+    
+    @patch('vertex_spec_adapter.cli.commands.model_interactive.ConfigurationManager')
+    @patch('vertex_spec_adapter.cli.commands.model_interactive.ModelRegistry')
+    def test_switch_model_config_save_error(self, mock_registry, mock_config_manager):
+        """Test model switch with config save error."""
+        from vertex_spec_adapter.core.exceptions import ConfigurationError
+        
+        mock_config = Mock()
+        mock_config.project_id = "test-project"
+        mock_config.model = "old-model"
+        mock_config.region = "us-central1"
+        mock_config_manager.return_value.load_config.return_value = mock_config
+        mock_config_manager.return_value.save_config.side_effect = ConfigurationError("Save failed")
+        
+        mock_metadata = Mock()
+        mock_metadata.default_region = "us-west2"
+        mock_metadata.available_regions = ["us-west2"]
+        mock_metadata.latest_version = "latest"
+        
+        mock_registry_instance = Mock()
+        mock_registry_instance.get_model_metadata.return_value = mock_metadata
+        mock_registry_instance.validate_model_availability.return_value = True
+        mock_registry.return_value = mock_registry_instance
+        
+        menu = ModelInteractiveMenu()
+        
+        success, message = menu._switch_model("new-model")
+        
+        assert success is False
+        assert "Failed to save configuration" in message
+
+
+class TestModelInteractiveMenuRunWithSwitch:
+    """Test run_with_switch method."""
+    
+    @patch('vertex_spec_adapter.cli.commands.model_interactive.ModelInteractiveMenu.run')
+    @patch('vertex_spec_adapter.cli.commands.model_interactive.ModelInteractiveMenu._switch_model')
+    def test_run_with_switch_success(self, mock_switch, mock_run):
+        """Test run_with_switch with successful switch."""
+        mock_run.return_value = "selected-model"
+        mock_switch.return_value = (True, "Success message")
+        
+        menu = ModelInteractiveMenu.__new__(ModelInteractiveMenu)
+        menu.console = Mock()
+        
+        result = menu.run_with_switch()
+        
+        assert result == "selected-model"
+        mock_switch.assert_called_once_with("selected-model")
+    
+    @patch('vertex_spec_adapter.cli.commands.model_interactive.ModelInteractiveMenu.run')
+    def test_run_with_switch_cancelled(self, mock_run):
+        """Test run_with_switch when user cancels."""
+        mock_run.return_value = None
+        
+        menu = ModelInteractiveMenu.__new__(ModelInteractiveMenu)
+        menu.console = Mock()
+        
+        result = menu.run_with_switch()
+        
+        assert result is None
+    
+    @patch('vertex_spec_adapter.cli.commands.model_interactive.ModelInteractiveMenu.run')
+    @patch('vertex_spec_adapter.cli.commands.model_interactive.ModelInteractiveMenu._switch_model')
+    def test_run_with_switch_failure(self, mock_switch, mock_run):
+        """Test run_with_switch with switch failure."""
+        mock_run.return_value = "selected-model"
+        mock_switch.return_value = (False, "Error message")
+        
+        menu = ModelInteractiveMenu.__new__(ModelInteractiveMenu)
+        menu.console = Mock()
+        
+        result = menu.run_with_switch()
+        
+        assert result is None
+        mock_switch.assert_called_once_with("selected-model")
+

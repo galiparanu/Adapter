@@ -463,7 +463,7 @@
 - [x] Selection highlighted
 - [x] Scrolling works
 
-**Notes**: Implemented _format_model_list() with selection indicator (▶), current model indicator (✓), and highlighted selection. Models sorted alphabetically per FR-004.
+**Notes**: Implemented \_format_model_list() with selection indicator (▶), current model indicator (✓), and highlighted selection. Models sorted alphabetically per FR-004.
 
 ### T017: Implement Keyboard Navigation
 
@@ -487,7 +487,7 @@
 - [x] Navigation is smooth
 - [x] No lag or jank
 
-**Notes**: Implemented _handle_keypress() and _get_key() with cross-platform support (Unix/Linux/Mac with termios, Windows with msvcrt). All keys (up, down, enter, escape, home, end) work correctly. Uses Rich Live for smooth updates.
+**Notes**: Implemented \_handle_keypress() and \_get_key() with cross-platform support (Unix/Linux/Mac with termios, Windows with msvcrt). All keys (up, down, enter, escape, home, end) work correctly. Uses Rich Live for smooth updates.
 
 ### T018: Implement Hover Details Panel
 
@@ -513,7 +513,7 @@
 - [x] Formatting is clear
 - [x] All fields shown (except region/provider/access_pattern)
 
-**Notes**: Implemented _format_hover_details() showing Model Name & ID, Context Window, Pricing, Capabilities, Status, and Description. Explicitly excludes Region, Access Pattern, and Provider per requirements. Updates in real-time as user navigates.
+**Notes**: Implemented \_format_hover_details() showing Model Name & ID, Context Window, Pricing, Capabilities, Status, and Description. Explicitly excludes Region, Access Pattern, and Provider per requirements. Updates in real-time as user navigates.
 
 ### T019: Implement Current Model Display
 
@@ -536,7 +536,7 @@
 - [x] Format is clear
 - [x] Updates correctly
 
-**Notes**: Implemented _format_current_model() displaying current model name and ID in top panel. Shows "None" if no current model, or "(not in available models)" if current model not found in registry.
+**Notes**: Implemented \_format_current_model() displaying current model name and ID in top panel. Shows "None" if no current model, or "(not in available models)" if current model not found in registry.
 
 ### T020: Implement Menu Layout with Rich Layout
 
@@ -561,7 +561,7 @@
 - [x] All panels visible
 - [x] Looks polished
 
-**Notes**: Implemented _render_menu() using Rich Layout with three-panel structure: top (current model), left (model list), right (hover details). Uses Rich Live for real-time updates. Responsive to terminal size with ratio-based layout.
+**Notes**: Implemented \_render_menu() using Rich Layout with three-panel structure: top (current model), left (model list), right (hover details). Uses Rich Live for real-time updates. Responsive to terminal size with ratio-based layout.
 
 ### T021: Write Unit Tests for Menu Component
 
@@ -593,7 +593,7 @@
 
 ### T022: Implement Model Selection Handler
 
-**Status**: [ ]  
+**Status**: [x]  
 **Dependencies**: T017  
 **Description**:
 
@@ -608,13 +608,15 @@
 
 **Acceptance**:
 
-- [ ] Selection works
-- [ ] Validation works
-- [ ] Returns correct model
+- [x] Selection works
+- [x] Validation works
+- [x] Returns correct model
+
+**Notes**: Enhanced \_handle_keypress() to validate model exists in registry before returning. Returns None if model not found (graceful handling).
 
 ### T023: Implement Model Switching Logic
 
-**Status**: [ ]  
+**Status**: [x]  
 **Dependencies**: T022  
 **Description**:
 
@@ -629,13 +631,15 @@
 
 **Acceptance**:
 
-- [ ] Switching works
-- [ ] Errors handled
-- [ ] Feedback provided
+- [x] Switching works
+- [x] Errors handled
+- [x] Feedback provided
+
+**Notes**: Implemented \_switch_model() method that validates model, checks region availability, initializes VertexAIClient, and handles all error scenarios (ModelNotFoundError, AuthenticationError, APIError, ConfigurationError).
 
 ### T024: Implement Configuration Update
 
-**Status**: [ ]  
+**Status**: [x]  
 **Dependencies**: T023  
 **Description**:
 
@@ -650,13 +654,15 @@
 
 **Acceptance**:
 
-- [ ] Config updated
-- [ ] Other settings preserved
-- [ ] Errors handled
+- [x] Config updated
+- [x] Other settings preserved
+- [x] Errors handled
+
+**Notes**: Configuration update integrated into \_switch_model(). Uses ConfigurationManager.save_config() to persist changes. Preserves all existing config settings (project_id, auth_method, etc.) and only updates model, region, and model_version.
 
 ### T025: Implement Selection Persistence
 
-**Status**: [ ]  
+**Status**: [x]  
 **Dependencies**: T024  
 **Description**:
 
@@ -671,13 +677,15 @@
 
 **Acceptance**:
 
-- [ ] Selection persists
-- [ ] Loads on startup
-- [ ] Handles missing config
+- [x] Selection persists
+- [x] Loads on startup
+- [x] Handles missing config
+
+**Notes**: Persistence handled via ConfigurationManager.save_config(). Selection loads on startup in **init**() via config.model.id. Handles missing config gracefully by creating default config if needed. Updates current_model_id after successful switch.
 
 ### T026: Implement Success/Error Feedback
 
-**Status**: [ ]  
+**Status**: [x]  
 **Dependencies**: T023, T024  
 **Description**:
 
@@ -692,9 +700,11 @@
 
 **Acceptance**:
 
-- [ ] Messages clear
-- [ ] Formatting good
-- [ ] Helpful content
+- [x] Messages clear
+- [x] Formatting good
+- [x] Helpful content
+
+**Notes**: Implemented run_with_switch() method that shows success (green ✓) or error (red ✗) messages using Rich formatting. Messages include model name, ID, and region for success, and detailed error information with troubleshooting hints for failures.
 
 ### T027: Write Integration Tests for Model Switching
 

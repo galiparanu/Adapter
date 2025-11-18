@@ -10,8 +10,15 @@ from rich.live import Live
 from rich.panel import Panel
 from rich.text import Text
 
+from vertex_spec_adapter.core.auth import AuthenticationManager
+from vertex_spec_adapter.core.client import VertexAIClient
 from vertex_spec_adapter.core.config import ConfigurationManager
-from vertex_spec_adapter.core.exceptions import ConfigurationError, ModelNotFoundError
+from vertex_spec_adapter.core.exceptions import (
+    APIError,
+    AuthenticationError,
+    ConfigurationError,
+    ModelNotFoundError,
+)
 from vertex_spec_adapter.core.models import ModelMetadata, ModelRegistry
 
 
@@ -344,9 +351,16 @@ class ModelInteractiveMenu:
             self.hover_details_model_id = self.models[self.selected_index].model_id
         
         elif key == "enter":
-            # Select current model
-            selected_model = self.models[self.selected_index]
-            return selected_model.model_id
+            # Select current model (T022: Model Selection Handler)
+            if self.selected_index < len(self.models):
+                selected_model = self.models[self.selected_index]
+                # Validate model exists in registry
+                if self.model_registry.get_model_metadata(selected_model.model_id):
+                    return selected_model.model_id
+                else:
+                    # Model not found in registry (shouldn't happen, but handle gracefully)
+                    return None
+            return None
         
         elif key == "escape":
             # Cancel
@@ -513,5 +527,140 @@ class ModelInteractiveMenu:
                     except (EOFError, KeyboardInterrupt):
                         return None
         except KeyboardInterrupt:
+            return None
+    
+    def _switch_model(self, model_id: str) -> tuple[bool, Optional[str]]:
+        """
+        Switch to the selected model and update configuration (T023: Model Switching Logic).
+        
+        Args:
+            model_id: Model ID to switch to
+        
+        Returns:
+            Tuple of (success: bool, message: Optional[str])
+            - success: True if switch succeeded, False otherwise
+            - message: Success or error message
+        """
+        try:
+            # Validate model exists
+            metadata = self.model_registry.get_model_metadata(model_id)
+            if not metadata:
+                return (
+                    False,
+                    f"Model '{model_id}' not found in registry. Please check available models.",
+                )
+            
+            # Get current config
+            try:
+                config = self.config_manager.load_config()
+                project_id = config.project_id
+                old_model_id = config.model
+            except ConfigurationError:
+                # No config exists, create default
+                project_id = "default-project"
+                old_model_id = None
+                config = self.config_manager.create_default_config(project_id=project_id)
+            
+            # Get model region (use default if not specified)
+            region = metadata.default_region or config.region or "us-central1"
+            
+            # Validate model availability in region
+            try:
+                self.model_registry.validate_model_availability(model_id, region)
+            except ModelNotFoundError as e:
+                return (
+                    False,
+                    f"Model '{model_id}' not available in region '{region}'. "
+                    f"Available regions: {', '.join(metadata.available_regions)}",
+                )
+            
+            # Switch model using VertexAIClient (T023)
+            try:
+                # Initialize authentication
+                auth_manager = AuthenticationManager()
+                credentials = auth_manager.get_credentials(config.auth_method)
+                
+                # Create or update client
+                client = VertexAIClient(
+                    project_id=project_id,
+                    region=region,
+                    model_id=model_id,
+                    model_version=metadata.latest_version,
+                    credentials=credentials,
+                    config=config,
+                )
+                
+                # Update configuration (T024: Configuration Update)
+                config.model = model_id
+                config.region = region
+                if metadata.latest_version:
+                    config.model_version = metadata.latest_version
+                
+                # Save configuration (T025: Selection Persistence)
+                try:
+                    self.config_manager.save_config(config)
+                except ConfigurationError as e:
+                    return (
+                        False,
+                        f"Failed to save configuration: {str(e)}. "
+                        "Please check file permissions and try again.",
+                    )
+                
+                # Update current model ID
+                self.current_model_id = model_id
+                
+                return (
+                    True,
+                    f"Successfully switched to '{metadata.name}' ({model_id}) in region '{region}'",
+                )
+            
+            except AuthenticationError as e:
+                return (
+                    False,
+                    f"Authentication failed: {str(e)}. "
+                    "Please check your credentials and try again.",
+                )
+            except APIError as e:
+                return (
+                    False,
+                    f"Failed to switch model: {str(e)}. "
+                    "Please check your configuration and try again.",
+                )
+            except Exception as e:
+                return (
+                    False,
+                    f"Unexpected error during model switch: {str(e)}",
+                )
+        
+        except Exception as e:
+            return (
+                False,
+                f"Error switching model: {str(e)}",
+            )
+    
+    def run_with_switch(self) -> Optional[str]:
+        """
+        Run interactive menu and switch model if selected.
+        
+        Returns:
+            Selected model ID if switch succeeded, None if cancelled or failed.
+        """
+        selected_model_id = self.run()
+        
+        if not selected_model_id:
+            return None
+        
+        # Switch model (T023, T024, T025)
+        success, message = self._switch_model(selected_model_id)
+        
+        # Show feedback (T026: Success/Error Feedback)
+        if success:
+            self.console.print(f"\n[bold green]✓ {message}[/bold green]")
+            return selected_model_id
+        else:
+            self.console.print(f"\n[bold red]✗ {message}[/bold red]")
+            self.console.print(
+                "[yellow]Model switch failed. Current model unchanged.[/yellow]"
+            )
             return None
 
