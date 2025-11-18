@@ -123,29 +123,29 @@
 
 **Independent Test**: Configure service account auth, verify API calls go through Vertex AI, confirm audit logs generated
 
-- [ ] T063 [US2] Create AuthenticationManager class in vertex_spec_adapter/core/auth.py
-- [ ] T064 [US2] Implement authenticate method with priority order in vertex_spec_adapter/core/auth.py
-- [ ] T065 [US2] Implement service account authentication in vertex_spec_adapter/core/auth.py
-- [ ] T066 [US2] Implement user credentials authentication (gcloud) in vertex_spec_adapter/core/auth.py
-- [ ] T067 [US2] Implement Application Default Credentials (ADC) authentication in vertex_spec_adapter/core/auth.py
-- [ ] T068 [US2] Implement credential validation method in vertex_spec_adapter/core/auth.py
-- [ ] T069 [US2] Implement credential refresh for expired tokens in vertex_spec_adapter/core/auth.py
-- [ ] T070 [US2] Implement credential caching with expiry tracking in vertex_spec_adapter/core/auth.py
-- [ ] T071 [US2] Implement get_credentials_path method with environment variable support in vertex_spec_adapter/core/auth.py
-- [ ] T072 [US2] Create UsageTracker class for token and cost tracking in vertex_spec_adapter/utils/metrics.py
-- [ ] T073 [US2] Implement track_request method with token counting in vertex_spec_adapter/utils/metrics.py
-- [ ] T074 [US2] Implement cost estimation per model in vertex_spec_adapter/utils/metrics.py
-- [ ] T075 [US2] Implement generate_report method for session summaries in vertex_spec_adapter/utils/metrics.py
-- [ ] T076 [US2] Enhance logging to include API call details (timestamp, model, tokens) in vertex_spec_adapter/utils/logging.py
-- [ ] T077 [US2] Implement audit log format for enterprise compliance in vertex_spec_adapter/utils/logging.py
-- [ ] T078 [US2] Create unit tests for AuthenticationManager in tests/unit/test_auth.py
-- [ ] T079 [US2] Create unit tests for credential validation in tests/unit/test_auth.py
-- [ ] T080 [US2] Create unit tests for credential caching in tests/unit/test_auth.py
-- [ ] T081 [US2] Create unit tests for UsageTracker in tests/unit/test_metrics.py
-- [ ] T082 [US2] Create integration tests for authentication flow in tests/integration/test_auth_flow.py
-- [ ] T083 [US2] Create integration test for service account authentication in tests/integration/test_auth_flow.py
-- [ ] T084 [US2] Create integration test for user credentials authentication in tests/integration/test_auth_flow.py
-- [ ] T085 [US2] Create integration test for ADC authentication in tests/integration/test_auth_flow.py
+- [x] T063 [US2] Create AuthenticationManager class in vertex_spec_adapter/core/auth.py
+- [x] T064 [US2] Implement authenticate method with priority order in vertex_spec_adapter/core/auth.py
+- [x] T065 [US2] Implement service account authentication in vertex_spec_adapter/core/auth.py
+- [x] T066 [US2] Implement user credentials authentication (gcloud) in vertex_spec_adapter/core/auth.py
+- [x] T067 [US2] Implement Application Default Credentials (ADC) authentication in vertex_spec_adapter/core/auth.py
+- [x] T068 [US2] Implement credential validation method in vertex_spec_adapter/core/auth.py
+- [x] T069 [US2] Implement credential refresh for expired tokens in vertex_spec_adapter/core/auth.py
+- [x] T070 [US2] Implement credential caching with expiry tracking in vertex_spec_adapter/core/auth.py
+- [x] T071 [US2] Implement get_credentials_path method with environment variable support in vertex_spec_adapter/core/auth.py
+- [x] T072 [US2] Create UsageTracker class for token and cost tracking in vertex_spec_adapter/utils/metrics.py
+- [x] T073 [US2] Implement track_request method with token counting in vertex_spec_adapter/utils/metrics.py
+- [x] T074 [US2] Implement cost estimation per model in vertex_spec_adapter/utils/metrics.py
+- [x] T075 [US2] Implement generate_report method for session summaries in vertex_spec_adapter/utils/metrics.py
+- [x] T076 [US2] Enhance logging to include API call details (timestamp, model, tokens) in vertex_spec_adapter/utils/logging.py
+- [x] T077 [US2] Implement audit log format for enterprise compliance in vertex_spec_adapter/utils/logging.py
+- [x] T078 [US2] Create unit tests for AuthenticationManager in tests/unit/test_auth.py
+- [x] T079 [US2] Create unit tests for credential validation in tests/unit/test_auth.py
+- [x] T080 [US2] Create unit tests for credential caching in tests/unit/test_auth.py
+- [x] T081 [US2] Create unit tests for UsageTracker in tests/unit/test_metrics.py
+- [x] T082 [US2] Create integration tests for authentication flow in tests/integration/test_auth_flow.py
+- [x] T083 [US2] Create integration test for service account authentication in tests/integration/test_auth_flow.py
+- [x] T084 [US2] Create integration test for user credentials authentication in tests/integration/test_auth_flow.py
+- [x] T085 [US2] Create integration test for ADC authentication in tests/integration/test_auth_flow.py
 
 ## Phase 5: User Story 5 - Full Spec Kit Workflow Integration (P1)
 
