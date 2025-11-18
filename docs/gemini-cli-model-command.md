@@ -120,6 +120,9 @@ Execute interactive model selection:
 | `Enter` | Select current model |
 | `Escape` | Cancel and exit |
 | `Ctrl+C` | Cancel and exit (graceful) |
+| `?` or `H` | Show keyboard shortcuts help |
+
+**Note**: Press `?` or `H` at any time to display the keyboard shortcuts help overlay.
 
 ### Menu Layout
 
