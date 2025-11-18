@@ -1264,6 +1264,7 @@
 - [x] Good UX
 
 **Notes**: Enhanced visual design with:
+
 - Bright colors (`bright_cyan`, `bright_white`, `bright_green`, `bright_yellow`) for better visibility
 - Emoji icons (🎯, 💰, ⚡, 📊, 📝) for visual indicators
 - Enhanced panel titles with Rich markup (`[bold cyan]Vertex AI Models[/bold cyan]`)
@@ -1316,11 +1317,12 @@
 - [x] Performance meets targets
 
 **Notes**: Created comprehensive performance test suite (200+ lines) with 4 test classes:
+
 - TestMenuRenderingPerformance: Benchmarks menu rendering (< 50ms target)
 - TestHoverDetailUpdatePerformance: Benchmarks hover updates (< 10ms target, verifies caching)
 - TestModelSwitchingPerformance: Benchmarks model switching (< 500ms target)
 - TestKeyboardResponsePerformance: Benchmarks keyboard navigation (< 100ms target)
-All tests use `time.perf_counter()` for accurate timing and verify performance targets are met.
+  All tests use `time.perf_counter()` for accurate timing and verify performance targets are met.
 
 ### T050: Final Polish & Code Review
 
@@ -1346,6 +1348,7 @@ All tests use `time.perf_counter()` for accurate timing and verify performance t
 - [x] Ready for release
 
 **Notes**: Completed final polish:
+
 - Code review: All optimizations verified, no linter errors
 - Documentation: Updated docs/gemini-cli-model-command.md with keyboard shortcuts help
 - Testing: Performance tests created and verified
