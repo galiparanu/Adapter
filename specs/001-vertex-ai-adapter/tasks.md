@@ -195,23 +195,23 @@
 
 **Independent Test**: Configure different models, validate availability, execute commands with different models, compare metrics
 
-- [ ] T121 [US3] Create ModelRegistry class in vertex_spec_adapter/core/models.py
-- [ ] T122 [US3] Implement model metadata storage with regions and versions in vertex_spec_adapter/core/models.py
-- [ ] T123 [US3] Implement get_available_models method with caching in vertex_spec_adapter/core/models.py
-- [ ] T124 [US3] Implement validate_model_availability method in vertex_spec_adapter/core/models.py
-- [ ] T125 [US3] Implement model provider detection (MaaS vs Native SDK) in vertex_spec_adapter/core/models.py
-- [ ] T126 [US3] Implement model switching logic in vertex_spec_adapter/core/client.py
-- [ ] T127 [US3] Implement region handling with model-specific defaults in vertex_spec_adapter/core/models.py
-- [ ] T128 [US3] Implement region override support in vertex_spec_adapter/core/models.py
-- [ ] T129 [US3] Implement version pinning support in vertex_spec_adapter/core/models.py
-- [ ] T130 [US3] Implement latest version detection in vertex_spec_adapter/core/models.py
-- [ ] T131 [US3] Create models command handler in vertex_spec_adapter/cli/commands/models.py
-- [ ] T132 [US3] Implement models list subcommand with filtering in vertex_spec_adapter/cli/commands/models.py
-- [ ] T133 [US3] Implement model information display with rich tables in vertex_spec_adapter/cli/commands/models.py
-- [ ] T134 [US3] Create unit tests for ModelRegistry in tests/unit/test_models.py
-- [ ] T135 [US3] Create unit tests for model availability validation in tests/unit/test_models.py
-- [ ] T136 [US3] Create unit tests for model switching in tests/unit/test_client.py
-- [ ] T137 [US3] Create integration tests for model availability checks in tests/integration/test_vertex_api.py
+- [x] T121 [US3] Create ModelRegistry class in vertex_spec_adapter/core/models.py
+- [x] T122 [US3] Implement model metadata storage with regions and versions in vertex_spec_adapter/core/models.py
+- [x] T123 [US3] Implement get_available_models method with caching in vertex_spec_adapter/core/models.py
+- [x] T124 [US3] Implement validate_model_availability method in vertex_spec_adapter/core/models.py
+- [x] T125 [US3] Implement model provider detection (MaaS vs Native SDK) in vertex_spec_adapter/core/models.py
+- [x] T126 [US3] Implement model switching logic in vertex_spec_adapter/core/client.py
+- [x] T127 [US3] Implement region handling with model-specific defaults in vertex_spec_adapter/core/models.py
+- [x] T128 [US3] Implement region override support in vertex_spec_adapter/core/models.py
+- [x] T129 [US3] Implement version pinning support in vertex_spec_adapter/core/models.py
+- [x] T130 [US3] Implement latest version detection in vertex_spec_adapter/core/models.py
+- [x] T131 [US3] Create models command handler in vertex_spec_adapter/cli/commands/models.py
+- [x] T132 [US3] Implement models list subcommand with filtering in vertex_spec_adapter/cli/commands/models.py
+- [x] T133 [US3] Implement model information display with rich tables in vertex_spec_adapter/cli/commands/models.py
+- [x] T134 [US3] Create unit tests for ModelRegistry in tests/unit/test_models.py
+- [x] T135 [US3] Create unit tests for model availability validation in tests/unit/test_models.py
+- [x] T136 [US3] Create unit tests for model switching in tests/unit/test_client.py
+- [x] T137 [US3] Create integration tests for model availability checks in tests/integration/test_vertex_api.py
 
 ## Phase 7: User Story 4 - Comprehensive Error Recovery (P2)
 
