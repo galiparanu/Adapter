@@ -848,6 +848,7 @@
 - [x] Mocks work correctly
 
 **Notes**: Created comprehensive test suite (9,602 bytes) covering:
+
 - GeminiCLICommandInstaller: get_command_path, is_installed, install (success, errors, force), uninstall
 - ModelCommand argument parsing: no args, empty list, with args, --list, --switch, --info flags
 - ModelCommand main: interactive success/cancelled, KeyboardInterrupt, exceptions
