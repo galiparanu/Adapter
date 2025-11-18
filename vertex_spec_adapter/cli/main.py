@@ -1,0 +1,139 @@
+"""CLI main entry point for Vertex Spec Adapter."""
+
+import sys
+from pathlib import Path
+from typing import Optional
+
+import typer
+from rich.console import Console
+
+from vertex_spec_adapter.cli import commands
+from vertex_spec_adapter.cli.utils import print_error
+from vertex_spec_adapter.core.exceptions import ConfigurationError
+
+# Initialize Typer app
+app = typer.Typer(
+    name="vertex-spec",
+    help="Vertex AI Spec Kit Adapter - Bridge tool for using Spec Kit with Google Vertex AI models",
+    add_completion=False,
+)
+
+# Initialize console
+console = Console()
+
+# Register commands
+app.add_typer(commands.init_app, name="init", help="Initialize a new Spec Kit project")
+app.add_typer(commands.config_app, name="config", help="Manage configuration")
+app.add_typer(commands.test_app, name="test", help="Test Vertex AI connection")
+
+
+@app.callback()
+def main(
+    ctx: typer.Context,
+    config: Optional[Path] = typer.Option(
+        None,
+        "--config",
+        "-c",
+        help="Path to configuration file (default: .specify/config.yaml)",
+    ),
+    verbose: bool = typer.Option(
+        False,
+        "--verbose",
+        "-v",
+        help="Enable verbose output",
+    ),
+    quiet: bool = typer.Option(
+        False,
+        "--quiet",
+        "-q",
+        help="Suppress all output except errors",
+    ),
+    debug: bool = typer.Option(
+        False,
+        "--debug",
+        help="Enable debug mode",
+    ),
+    version: bool = typer.Option(
+        False,
+        "--version",
+        help="Show version and exit",
+    ),
+) -> None:
+    """
+    Vertex AI Spec Kit Adapter - Bridge tool for using Spec Kit with Google Vertex AI models.
+    
+    This tool enables seamless integration between Spec Kit and Google Vertex AI,
+    supporting multiple models (Claude, Gemini, Qwen) with flexible configuration.
+    """
+    # Handle version flag
+    if version:
+        try:
+            from importlib.metadata import version
+            v = version("vertex-spec-adapter")
+            console.print(f"vertex-spec version {v}")
+        except Exception:
+            console.print("vertex-spec version 0.1.0")
+        raise typer.Exit(0)
+    
+    # Store options in context for subcommands to access
+    ctx.ensure_object(dict)
+    ctx.obj["config_path"] = config
+    ctx.obj["verbose"] = verbose
+    ctx.obj["quiet"] = quiet
+    ctx.obj["debug"] = debug
+
+
+@app.command("models")
+def list_models(
+    region: Optional[str] = typer.Option(None, "--region", help="Filter by region"),
+    provider: Optional[str] = typer.Option(None, "--provider", help="Filter by provider"),
+    format: str = typer.Option("table", "--format", "-f", help="Output format (table, json, yaml)"),
+) -> None:
+    """
+    List available models and their information.
+    """
+    # TODO: Implement in Phase 4
+    console.print("[yellow]Models command not yet implemented[/yellow]")
+    console.print("This will be available in Phase 4: Model Registry")
+
+
+@app.command("run")
+def run_command(
+    command: str = typer.Argument(..., help="Spec Kit command to run"),
+    model: Optional[str] = typer.Option(None, "--model", help="Override default model"),
+    region: Optional[str] = typer.Option(None, "--region", help="Override default region"),
+    stream: bool = typer.Option(False, "--stream", help="Stream response"),
+) -> None:
+    """
+    Execute Spec Kit command with Vertex AI.
+    """
+    # TODO: Implement in Phase 5
+    console.print("[yellow]Run command not yet implemented[/yellow]")
+    console.print("This will be available in Phase 5: Spec Kit Integration")
+
+
+def cli() -> None:
+    """
+    CLI entry point.
+    
+    This function is called by the console script defined in pyproject.toml.
+    """
+    try:
+        app()
+    except KeyboardInterrupt:
+        console.print("\n[yellow]Cancelled by user[/yellow]")
+        sys.exit(130)
+    except ConfigurationError as e:
+        print_error(e)
+        sys.exit(2)
+    except Exception as e:
+        if "--debug" in sys.argv or "-d" in sys.argv:
+            console.print_exception()
+        else:
+            print_error(e)
+        sys.exit(1)
+
+
+if __name__ == "__main__":
+    cli()
+

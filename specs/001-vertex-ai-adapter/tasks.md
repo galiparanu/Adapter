@@ -89,33 +89,33 @@
 
 **Independent Test**: Run installation, setup wizard, configuration, and test command - all should complete successfully in under 5 minutes
 
-- [ ] T036 [US1] Create ConfigurationManager class in vertex_spec_adapter/core/config.py
-- [ ] T037 [US1] Implement load_config method to read YAML/JSON files in vertex_spec_adapter/core/config.py
-- [ ] T038 [US1] Implement validate_config method with Pydantic validation in vertex_spec_adapter/core/config.py
-- [ ] T039 [US1] Implement environment variable override support in vertex_spec_adapter/core/config.py
-- [ ] T040 [US1] Implement create_default_config method in vertex_spec_adapter/core/config.py
-- [ ] T041 [US1] Create CLI main entry point in vertex_spec_adapter/cli/main.py
-- [ ] T042 [US1] Initialize Typer app with global options in vertex_spec_adapter/cli/main.py
-- [ ] T043 [US1] Create init command handler in vertex_spec_adapter/cli/commands/init.py
-- [ ] T044 [US1] Implement interactive setup wizard with prompts in vertex_spec_adapter/cli/commands/init.py
-- [ ] T045 [US1] Implement prerequisite checking (Python version, Git) in vertex_spec_adapter/cli/commands/init.py
-- [ ] T046 [US1] Implement config file creation in vertex_spec_adapter/cli/commands/init.py
-- [ ] T047 [US1] Create config command handler in vertex_spec_adapter/cli/commands/config.py
-- [ ] T048 [US1] Implement config show subcommand in vertex_spec_adapter/cli/commands/config.py
-- [ ] T049 [US1] Implement config set subcommand in vertex_spec_adapter/cli/commands/config.py
-- [ ] T050 [US1] Implement config get subcommand in vertex_spec_adapter/cli/commands/config.py
-- [ ] T051 [US1] Implement config validate subcommand in vertex_spec_adapter/cli/commands/config.py
-- [ ] T052 [US1] Create test command handler in vertex_spec_adapter/cli/commands/test.py
-- [ ] T053 [US1] Implement connection test with credential validation in vertex_spec_adapter/cli/commands/test.py
-- [ ] T054 [US1] Implement Vertex AI connectivity test in vertex_spec_adapter/cli/commands/test.py
-- [ ] T055 [US1] Create CLI utilities module in vertex_spec_adapter/cli/utils.py
-- [ ] T056 [US1] Implement error message formatting with suggestions in vertex_spec_adapter/cli/utils.py
-- [ ] T057 [US1] Implement progress indicator helpers using rich in vertex_spec_adapter/cli/utils.py
-- [ ] T058 [US1] Create unit tests for ConfigurationManager in tests/unit/test_config.py
-- [ ] T059 [US1] Create unit tests for init command in tests/unit/test_cli_init.py
-- [ ] T060 [US1] Create unit tests for config command in tests/unit/test_cli_config.py
-- [ ] T061 [US1] Create unit tests for test command in tests/unit/test_cli_test.py
-- [ ] T062 [US1] Create integration test for complete setup workflow in tests/integration/test_setup_workflow.py
+- [x] T036 [US1] Create ConfigurationManager class in vertex_spec_adapter/core/config.py
+- [x] T037 [US1] Implement load_config method to read YAML/JSON files in vertex_spec_adapter/core/config.py
+- [x] T038 [US1] Implement validate_config method with Pydantic validation in vertex_spec_adapter/core/config.py
+- [x] T039 [US1] Implement environment variable override support in vertex_spec_adapter/core/config.py
+- [x] T040 [US1] Implement create_default_config method in vertex_spec_adapter/core/config.py
+- [x] T041 [US1] Create CLI main entry point in vertex_spec_adapter/cli/main.py
+- [x] T042 [US1] Initialize Typer app with global options in vertex_spec_adapter/cli/main.py
+- [x] T043 [US1] Create init command handler in vertex_spec_adapter/cli/commands/init.py
+- [x] T044 [US1] Implement interactive setup wizard with prompts in vertex_spec_adapter/cli/commands/init.py
+- [x] T045 [US1] Implement prerequisite checking (Python version, Git) in vertex_spec_adapter/cli/commands/init.py
+- [x] T046 [US1] Implement config file creation in vertex_spec_adapter/cli/commands/init.py
+- [x] T047 [US1] Create config command handler in vertex_spec_adapter/cli/commands/config.py
+- [x] T048 [US1] Implement config show subcommand in vertex_spec_adapter/cli/commands/config.py
+- [x] T049 [US1] Implement config set subcommand in vertex_spec_adapter/cli/commands/config.py
+- [x] T050 [US1] Implement config get subcommand in vertex_spec_adapter/cli/commands/config.py
+- [x] T051 [US1] Implement config validate subcommand in vertex_spec_adapter/cli/commands/config.py
+- [x] T052 [US1] Create test command handler in vertex_spec_adapter/cli/commands/test.py
+- [x] T053 [US1] Implement connection test with credential validation in vertex_spec_adapter/cli/commands/test.py
+- [x] T054 [US1] Implement Vertex AI connectivity test in vertex_spec_adapter/cli/commands/test.py
+- [x] T055 [US1] Create CLI utilities module in vertex_spec_adapter/cli/utils.py
+- [x] T056 [US1] Implement error message formatting with suggestions in vertex_spec_adapter/cli/utils.py
+- [x] T057 [US1] Implement progress indicator helpers using rich in vertex_spec_adapter/cli/utils.py
+- [x] T058 [US1] Create unit tests for ConfigurationManager in tests/unit/test_config.py
+- [x] T059 [US1] Create unit tests for init command in tests/unit/test_cli_init.py
+- [x] T060 [US1] Create unit tests for config command in tests/unit/test_cli_config.py
+- [x] T061 [US1] Create unit tests for test command in tests/unit/test_cli_test.py
+- [x] T062 [US1] Create integration test for complete setup workflow in tests/integration/test_setup_workflow.py
 
 ## Phase 4: User Story 2 - Enterprise Authentication and Compliance (P1)
 
