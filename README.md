@@ -8,10 +8,11 @@ The Vertex AI Spec Kit Adapter provides a unified interface for using Spec Kit w
 
 ## Features
 
-- **Multiple Model Support**: Claude 4.5 Sonnet, Gemini 2.5 Pro, Qwen Coder
+- **Multiple Model Support**: DeepSeek V3.1, Qwen Coder, Gemini 2.5 Pro, DeepSeek R1, Kimi K2, GPT OSS 120B, Llama 3.1
 - **Dual Access Patterns**: Both MaaS REST API and Native SDK
 - **Enterprise Ready**: Service account authentication, audit logging, cost tracking
 - **Full Spec Kit Integration**: All five commands (constitution, specify, plan, tasks, implement)
+- **Gemini CLI Integration**: Custom `/model` command with interactive menu
 - **Developer Friendly**: 5-minute setup, interactive wizard, helpful error messages
 - **Production Ready**: Comprehensive testing, error recovery, performance optimization
 
@@ -44,6 +45,9 @@ vertex-spec test
 
 # List available models
 vertex-spec models
+
+# Use interactive model menu (Gemini CLI)
+# After installing the custom command, type '/model' in Gemini CLI
 ```
 
 ### Usage
@@ -62,12 +66,44 @@ vertex-spec run tasks specs/001-user-auth/plan.md
 vertex-spec run implement specs/001-user-auth/tasks.md
 ```
 
+## Gemini CLI `/model` Command
+
+The adapter includes a custom `/model` command for Gemini CLI that provides an interactive menu for browsing and switching between Vertex AI models.
+
+### Installation
+
+```bash
+# Install the custom command
+python scripts/install_gemini_model_command.py
+
+# Or use the module directly
+python -m vertex_spec_adapter.gemini_cli.command_installer
+```
+
+### Usage
+
+After installation, restart Gemini CLI and use the command:
+
+```bash
+gemini
+> /model
+```
+
+The interactive menu allows you to:
+- Browse all available models with detailed information
+- View model details on hover (context window, pricing, capabilities)
+- Switch models with a single selection
+- See which model is currently active
+
+For detailed usage instructions, see [Gemini CLI Model Command Documentation](docs/gemini-cli-model-command.md).
+
 ## Documentation
 
 - [Getting Started](docs/getting-started.md)
 - [Configuration](docs/configuration.md)
 - [Authentication](docs/authentication.md)
 - [Troubleshooting](docs/troubleshooting.md)
+- [Gemini CLI Model Command](docs/gemini-cli-model-command.md)
 
 ## Development
 
