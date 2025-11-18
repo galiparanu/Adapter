@@ -83,18 +83,14 @@ def main(
     ctx.obj["debug"] = debug
 
 
-@app.command("models")
-def list_models(
-    region: Optional[str] = typer.Option(None, "--region", help="Filter by region"),
-    provider: Optional[str] = typer.Option(None, "--provider", help="Filter by provider"),
-    format: str = typer.Option("table", "--format", "-f", help="Output format (table, json, yaml)"),
-) -> None:
-    """
-    List available models and their information.
-    """
-    # TODO: Implement in Phase 4
-    console.print("[yellow]Models command not yet implemented[/yellow]")
-    console.print("This will be available in Phase 4: Model Registry")
+# Import models command
+from vertex_spec_adapter.cli.commands import models
+
+# Create models command group
+models_app = typer.Typer(name="models", help="List and manage available models")
+models_app.command("list")(models.models_list)
+
+app.add_typer(models_app)
 
 
 # Import run commands

@@ -104,4 +104,49 @@ class TestVertexAIClient:
             
             with pytest.raises(ModelNotFoundError):
                 client.validate_model_availability("unknown-model", "us-east5")
+    
+    def test_switch_model(self):
+        """Test switching to a different model."""
+        with patch('vertex_spec_adapter.core.client.AuthenticationManager'):
+            client = VertexAIClient(
+                project_id="test-project",
+                region="us-east5",
+                model_id="claude-4-5-sonnet",
+                credentials=MagicMock(),
+            )
+            
+            old_model = client.model_id
+            client.switch_model("gemini-2-5-pro", new_region="us-central1")
+            
+            assert client.model_id == "gemini-2-5-pro"
+            assert client.region == "us-central1"
+            assert client.model_id != old_model
+    
+    def test_switch_model_with_version(self):
+        """Test switching model with version."""
+        with patch('vertex_spec_adapter.core.client.AuthenticationManager'):
+            client = VertexAIClient(
+                project_id="test-project",
+                region="us-east5",
+                model_id="claude-4-5-sonnet",
+                credentials=MagicMock(),
+            )
+            
+            client.switch_model("claude-3-5-sonnet", new_model_version="@20241022")
+            
+            assert client.model_id == "claude-3-5-sonnet"
+            assert client.model_version == "@20241022"
+    
+    def test_switch_model_not_found(self):
+        """Test switching to unknown model."""
+        with patch('vertex_spec_adapter.core.client.AuthenticationManager'):
+            client = VertexAIClient(
+                project_id="test-project",
+                region="us-east5",
+                model_id="claude-4-5-sonnet",
+                credentials=MagicMock(),
+            )
+            
+            with pytest.raises(ModelNotFoundError):
+                client.switch_model("unknown-model")
 

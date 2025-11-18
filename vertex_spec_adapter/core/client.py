@@ -11,6 +11,7 @@ from vertex_spec_adapter.core.exceptions import (
     ModelNotFoundError,
     RateLimitError,
 )
+from vertex_spec_adapter.core.models import ModelRegistry
 from vertex_spec_adapter.schemas.api import APIResponse, Message, ModelRequest
 from vertex_spec_adapter.schemas.config import VertexConfig
 from vertex_spec_adapter.utils.logging import get_logger, log_api_call
@@ -73,9 +74,13 @@ class VertexAIClient:
         self.model_version = model_version
         self.config = config
         self.usage_tracker = usage_tracker or UsageTracker()
+        self.model_registry = ModelRegistry()
+        
+        # Validate model availability
+        self.model_registry.validate_model_availability(self.model_id, self.region)
         
         # Determine access pattern
-        self.access_pattern = self._detect_access_pattern()
+        self.access_pattern = self.model_registry.detect_access_pattern(self.model_id)
         
         # Initialize authentication
         if credentials:
@@ -101,31 +106,69 @@ class VertexAIClient:
             access_pattern=self.access_pattern,
         )
     
-    def _detect_access_pattern(self) -> str:
+    def switch_model(
+        self,
+        new_model_id: str,
+        new_region: Optional[str] = None,
+        new_model_version: Optional[str] = None,
+    ) -> None:
         """
-        Detect access pattern for the model.
+        Switch to a different model.
         
-        Returns:
-            'native_sdk' or 'maas'
+        Args:
+            new_model_id: New model identifier
+            new_region: Optional new region (uses model default if not provided)
+            new_model_version: Optional new model version
+        
+        Raises:
+            ModelNotFoundError: If model is not available
         """
-        # Check exact match first
-        if self.model_id in self.MODEL_ACCESS_PATTERNS:
-            return self.MODEL_ACCESS_PATTERNS[self.model_id]
+        new_model_id_lower = new_model_id.lower()
         
-        # Check prefix patterns
-        if self.model_id.startswith("claude"):
-            return "native_sdk"
-        elif self.model_id.startswith("gemini"):
-            return "native_sdk"
-        elif self.model_id.startswith("qwen"):
-            return "maas"
+        # Get model metadata
+        metadata = self.model_registry.get_model_metadata(new_model_id_lower)
+        if not metadata:
+            raise ModelNotFoundError(
+                f"Model '{new_model_id}' not found",
+                model_id=new_model_id,
+                region=new_region or "unknown",
+            )
         
-        # Default to native SDK
-        logger.warning(
-            "Unknown model, defaulting to native_sdk",
-            model=self.model_id
+        # Determine region
+        if new_region:
+            # Validate region
+            self.model_registry.validate_model_availability(new_model_id_lower, new_region)
+            region = new_region
+        else:
+            # Use model default region
+            region = metadata.default_region or self.region
+        
+        # Determine version
+        if new_model_version:
+            # Validate version
+            self.model_registry.validate_version(new_model_id_lower, new_model_version)
+            version = new_model_version
+        else:
+            # Use latest version
+            version = metadata.latest_version
+        
+        # Update client state
+        old_model = self.model_id
+        self.model_id = new_model_id_lower
+        self.region = region
+        self.model_version = version
+        self.access_pattern = metadata.access_pattern
+        
+        # Reinitialize model client
+        self._model_client = self._initialize_model_client()
+        
+        logger.info(
+            "Model switched",
+            old_model=old_model,
+            new_model=self.model_id,
+            region=self.region,
+            version=self.model_version,
         )
-        return "native_sdk"
     
     def _initialize_model_client(self):
         """Initialize model-specific client based on access pattern."""
@@ -464,18 +507,5 @@ class VertexAIClient:
         Raises:
             ModelNotFoundError: If model is not available with details
         """
-        # For now, assume models are available if they're in our mapping
-        # In a full implementation, this would query the Vertex AI API
-        if model_id.lower() in self.MODEL_ACCESS_PATTERNS:
-            return True
-        
-        # Check prefix patterns
-        if model_id.lower().startswith(("claude", "gemini", "qwen")):
-            return True
-        
-        raise ModelNotFoundError(
-            f"Model '{model_id}' not found",
-            model_id=model_id,
-            region=region,
-        )
+        return self.model_registry.validate_model_availability(model_id, region)
 
