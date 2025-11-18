@@ -2,6 +2,7 @@
 
 import logging
 import re
+from datetime import datetime
 from typing import Any, Dict, Optional
 
 import structlog
@@ -150,4 +151,109 @@ def sanitize_error_message(error: Exception) -> str:
     )
     
     return message
+
+
+def log_api_call(
+    model: str,
+    input_tokens: int,
+    output_tokens: int,
+    latency_ms: Optional[float] = None,
+    success: bool = True,
+    error: Optional[str] = None,
+    **kwargs
+) -> None:
+    """
+    Log API call details for audit and monitoring.
+    
+    Args:
+        model: Model identifier used
+        input_tokens: Number of input tokens
+        output_tokens: Number of output tokens
+        latency_ms: Optional request latency in milliseconds
+        success: Whether the call was successful
+        error: Optional error message
+        **kwargs: Additional context to log
+    """
+    logger = get_logger(__name__)
+    
+    log_data = {
+        "event_type": "api_call",
+        "model": model,
+        "input_tokens": input_tokens,
+        "output_tokens": output_tokens,
+        "total_tokens": input_tokens + output_tokens,
+        "success": success,
+        "timestamp": datetime.utcnow().isoformat(),
+    }
+    
+    if latency_ms is not None:
+        log_data["latency_ms"] = latency_ms
+    
+    if error:
+        log_data["error"] = sanitize_error_message(Exception(error))
+    
+    # Add any additional context
+    log_data.update(kwargs)
+    
+    # Sanitize log data
+    log_data = sanitize_log_data(log_data)
+    
+    if success:
+        logger.info("API call completed", **log_data)
+    else:
+        logger.error("API call failed", **log_data)
+
+
+def log_audit_event(
+    event_type: str,
+    user: Optional[str] = None,
+    action: Optional[str] = None,
+    resource: Optional[str] = None,
+    success: bool = True,
+    error: Optional[str] = None,
+    **kwargs
+) -> None:
+    """
+    Log audit event for enterprise compliance.
+    
+    This creates structured audit logs suitable for compliance and security monitoring.
+    
+    Args:
+        event_type: Type of event (e.g., 'authentication', 'api_call', 'config_change')
+        user: Optional user identifier
+        action: Optional action performed
+        resource: Optional resource accessed
+        success: Whether the action was successful
+        error: Optional error message
+        **kwargs: Additional audit fields
+    """
+    logger = get_logger(__name__)
+    
+    audit_data = {
+        "event_type": "audit",
+        "audit_event_type": event_type,
+        "timestamp": datetime.utcnow().isoformat(),
+        "success": success,
+    }
+    
+    if user:
+        audit_data["user"] = user
+    
+    if action:
+        audit_data["action"] = action
+    
+    if resource:
+        audit_data["resource"] = resource
+    
+    if error:
+        audit_data["error"] = sanitize_error_message(Exception(error))
+    
+    # Add any additional audit fields
+    audit_data.update(kwargs)
+    
+    # Sanitize audit data
+    audit_data = sanitize_log_data(audit_data)
+    
+    # Always log audit events at INFO level for compliance
+    logger.info("Audit event", **audit_data)
 
