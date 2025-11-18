@@ -20,6 +20,9 @@ from vertex_spec_adapter.core.exceptions import (
     ModelNotFoundError,
 )
 from vertex_spec_adapter.core.models import ModelMetadata, ModelRegistry
+from vertex_spec_adapter.utils.logging import get_logger
+
+logger = get_logger(__name__)
 
 
 class ModelInteractiveMenu:
@@ -59,21 +62,30 @@ class ModelInteractiveMenu:
             project_id = "default-project"
             self.current_model_id = None
         
-        # Load available models
-        models_dict = self.model_registry.get_available_models(
-            project_id=project_id,
-            region=None,
-            use_cache=True,
-        )
+        # Load available models (T033: Handle Missing Models Gracefully)
+        try:
+            models_dict = self.model_registry.get_available_models(
+                project_id=project_id,
+                region=None,
+                use_cache=True,
+            )
+        except Exception as e:
+            # ModelRegistry unavailable - use empty list, will show error later
+            logger.warning(f"ModelRegistry unavailable: {e}")
+            models_dict = []
         
         # Convert dicts to ModelMetadata objects
         self.models: List[ModelMetadata] = []
         for model_dict in models_dict:
             model_id = model_dict.get("id")
             if model_id:
-                metadata = self.model_registry.get_model_metadata(model_id)
-                if metadata:
-                    self.models.append(metadata)
+                try:
+                    metadata = self.model_registry.get_model_metadata(model_id)
+                    if metadata:
+                        self.models.append(metadata)
+                except Exception:
+                    # Skip invalid models, don't crash
+                    continue
         
         # Sort models alphabetically by name (per FR-004)
         self.models.sort(key=lambda m: m.name.lower())
@@ -371,27 +383,59 @@ class ModelInteractiveMenu:
     
     def _check_terminal_support(self) -> bool:
         """
-        Check if terminal supports required features.
+        Check if terminal supports required features (T035: Handle Unsupported Terminals).
         
         Returns:
             True if terminal supports alternate screen, False otherwise
         """
-        return self.console.is_terminal
+        if not self.console.is_terminal:
+            return False
+        
+        # Check terminal size (minimum 80x24 per FR-011)
+        try:
+            size = self.console.size
+            if size.width < 80 or size.height < 24:
+                logger.warning(
+                    f"Terminal size too small: {size.width}x{size.height}. "
+                    "Minimum recommended: 80x24. Falling back to simple menu."
+                )
+                return False
+        except Exception:
+            # If we can't get size, assume unsupported
+            return False
+        
+        return True
     
     def _simple_text_menu(self) -> Optional[str]:
         """
-        Simple text-based menu fallback for unsupported terminals.
+        Simple text-based menu fallback for unsupported terminals (T035: Handle Unsupported Terminals).
         
         Returns:
             Selected model ID or None
         """
+        # Show warning about terminal support (T035)
+        self.console.print(
+            "[yellow]⚠ Terminal doesn't support interactive mode. Using simple text menu.[/yellow]\n"
+        )
+        
+        # T033: Handle Missing Models Gracefully
         if not self.models:
-            self.console.print("[red]No models available[/red]")
+            self.console.print(
+                "[red]✗ No models available[/red]\n"
+                "[yellow]Possible causes:[/yellow]\n"
+                "  • ModelRegistry connection failed\n"
+                "  • No models configured in vertex-config.md\n"
+                "  • Network connectivity issues\n"
+                "\n[yellow]Troubleshooting:[/yellow]\n"
+                "  1. Check ModelRegistry connection\n"
+                "  2. Verify vertex-config.md contains valid models\n"
+                "  3. Run 'vertex-spec models list' to see available models\n"
+            )
             return None
         
         self.console.print("\n[bold]Available Models:[/bold]\n")
         for i, model in enumerate(self.models):
-            current_marker = " (current)" if model.model_id.lower() == (self.current_model_id or "").lower() else ""
+            current_marker = " [green]✓ (current)[/green]" if model.model_id.lower() == (self.current_model_id or "").lower() else ""
             self.console.print(f"  {i + 1}. {model.name}{current_marker}")
         
         try:
@@ -403,9 +447,20 @@ class ModelInteractiveMenu:
             if 0 <= index < len(self.models):
                 return self.models[index].model_id
             else:
-                self.console.print("[red]Invalid selection[/red]")
+                self.console.print(
+                    f"[red]✗ Invalid selection: {choice}[/red]\n"
+                    f"[yellow]Please select a number between 1 and {len(self.models)}[/yellow]"
+                )
                 return None
-        except (ValueError, KeyboardInterrupt):
+        except ValueError:
+            self.console.print(
+                f"[red]✗ Invalid input: '{choice}'[/red]\n"
+                "[yellow]Please enter a number or 'q' to cancel[/yellow]"
+            )
+            return None
+        except KeyboardInterrupt:
+            # T036: Handle Keyboard Interrupts
+            self.console.print("\n[yellow]Selection cancelled by user[/yellow]")
             return None
     
     def _get_key(self) -> str:
@@ -484,9 +539,19 @@ class ModelInteractiveMenu:
         if not self._check_terminal_support():
             return self._simple_text_menu()
         
-        # Check if we have models
+        # T033: Handle Missing Models Gracefully
         if not self.models:
-            self.console.print("[red]No models available. Check ModelRegistry connection.[/red]")
+            self.console.print(
+                "[red]✗ No models available[/red]\n"
+                "[yellow]Possible causes:[/yellow]\n"
+                "  • ModelRegistry connection failed\n"
+                "  • No models configured in vertex-config.md\n"
+                "  • Network connectivity issues\n"
+                "\n[yellow]Troubleshooting:[/yellow]\n"
+                "  1. Check ModelRegistry connection\n"
+                "  2. Verify vertex-config.md contains valid models\n"
+                "  3. Run 'vertex-spec models list' to see available models\n"
+            )
             return None
         
         # Use Rich Live for real-time updates
@@ -525,8 +590,12 @@ class ModelInteractiveMenu:
                             if 1 <= num <= len(self.models):
                                 return self.models[num - 1].model_id
                     except (EOFError, KeyboardInterrupt):
+                        # T036: Handle Keyboard Interrupts
+                        self.console.print("\n[yellow]Selection cancelled by user[/yellow]")
                         return None
         except KeyboardInterrupt:
+            # T036: Handle Keyboard Interrupts
+            self.console.print("\n[yellow]Selection cancelled by user[/yellow]")
             return None
     
     def _switch_model(self, model_id: str) -> tuple[bool, Optional[str]]:
@@ -542,12 +611,20 @@ class ModelInteractiveMenu:
             - message: Success or error message
         """
         try:
-            # Validate model exists
+            # T033: Handle Missing Models Gracefully
             metadata = self.model_registry.get_model_metadata(model_id)
             if not metadata:
+                # List available models in error message
+                available_models = [m.name for m in self.models[:5]]  # Show first 5
+                available_msg = ", ".join(available_models)
+                if len(self.models) > 5:
+                    available_msg += f" (and {len(self.models) - 5} more)"
+                
                 return (
                     False,
-                    f"Model '{model_id}' not found in registry. Please check available models.",
+                    f"Model '{model_id}' not found in registry.\n"
+                    f"Available models: {available_msg}\n"
+                    "Run 'vertex-spec models list' to see all available models.",
                 )
             
             # Get current config
@@ -568,14 +645,46 @@ class ModelInteractiveMenu:
             try:
                 self.model_registry.validate_model_availability(model_id, region)
             except ModelNotFoundError as e:
-                return (
-                    False,
-                    f"Model '{model_id}' not available in region '{region}'. "
-                    f"Available regions: {', '.join(metadata.available_regions)}",
-                )
+                # T033, T037: Handle Missing Models with helpful message
+                error_msg = f"[red]✗ Model not available in region[/red]\n"
+                error_msg += f"[yellow]Model:[/yellow] {model_id}\n"
+                error_msg += f"[yellow]Requested region:[/yellow] {region}\n"
+                
+                if e.available_regions:
+                    error_msg += f"[yellow]Available regions:[/yellow] {', '.join(e.available_regions)}\n"
+                    error_msg += f"\n[yellow]Suggested fix:[/yellow]\n"
+                    error_msg += f"  Use one of these regions: {', '.join(e.available_regions)}\n"
+                
+                error_msg += "\n[yellow]Troubleshooting steps:[/yellow]\n"
+                error_msg += "  1. Verify model is available in your GCP project\n"
+                error_msg += "  2. Check Vertex AI API is enabled in the region\n"
+                error_msg += "  3. Run 'vertex-spec models list --region <region>' to verify\n"
+                
+                return (False, error_msg)
             
             # Switch model using VertexAIClient (T023)
             try:
+                # T034: Handle Authentication Errors - Check gcloud CLI first
+                try:
+                    import subprocess
+                    result = subprocess.run(
+                        ["gcloud", "--version"],
+                        capture_output=True,
+                        timeout=5,
+                    )
+                    if result.returncode != 0:
+                        raise FileNotFoundError("gcloud CLI not found")
+                except (FileNotFoundError, subprocess.TimeoutExpired):
+                    return (
+                        False,
+                        "gcloud CLI not installed or not in PATH.\n"
+                        "Installation instructions:\n"
+                        "  • macOS: brew install google-cloud-sdk\n"
+                        "  • Linux: See https://cloud.google.com/sdk/docs/install\n"
+                        "  • Windows: See https://cloud.google.com/sdk/docs/install\n"
+                        "\nAfter installation, run 'gcloud auth login' to authenticate.",
+                    )
+                
                 # Initialize authentication
                 auth_manager = AuthenticationManager()
                 credentials = auth_manager.get_credentials(config.auth_method)
@@ -600,11 +709,23 @@ class ModelInteractiveMenu:
                 try:
                     self.config_manager.save_config(config)
                 except ConfigurationError as e:
-                    return (
-                        False,
-                        f"Failed to save configuration: {str(e)}. "
-                        "Please check file permissions and try again.",
-                    )
+                    # T037: Add Helpful Error Messages for config errors
+                    config_path = self.config_manager.config_path
+                    error_msg = f"[red]✗ Failed to save configuration[/red]\n"
+                    error_msg += f"[yellow]Error:[/yellow] {e.message}\n"
+                    error_msg += f"[yellow]Config file:[/yellow] {config_path}\n"
+                    
+                    if e.suggested_fix:
+                        error_msg += f"\n[yellow]Suggested fix:[/yellow]\n"
+                        error_msg += f"  {e.suggested_fix}\n"
+                    
+                    error_msg += "\n[yellow]Troubleshooting steps:[/yellow]\n"
+                    error_msg += "  1. Check file permissions on config directory\n"
+                    error_msg += "  2. Verify disk space is available\n"
+                    error_msg += "  3. Check if file is locked by another process\n"
+                    error_msg += f"  4. Try manually editing: {config_path}\n"
+                    
+                    return (False, error_msg)
                 
                 # Update current model ID
                 self.current_model_id = model_id
@@ -615,17 +736,36 @@ class ModelInteractiveMenu:
                 )
             
             except AuthenticationError as e:
-                return (
-                    False,
-                    f"Authentication failed: {str(e)}. "
-                    "Please check your credentials and try again.",
-                )
+                # T034, T037: Handle Authentication Errors with helpful messages
+                error_msg = f"[red]✗ Authentication failed[/red]\n"
+                error_msg += f"[yellow]Error:[/yellow] {e.message}\n"
+                
+                if e.suggested_fix:
+                    error_msg += f"\n[yellow]Suggested fix:[/yellow]\n"
+                    error_msg += f"  {e.suggested_fix}\n"
+                
+                error_msg += "\n[yellow]Troubleshooting steps:[/yellow]\n"
+                error_msg += "  1. Run 'gcloud auth login' to authenticate\n"
+                error_msg += "  2. Verify 'gcloud auth print-access-token' works\n"
+                error_msg += "  3. Check GOOGLE_APPLICATION_CREDENTIALS if using service account\n"
+                error_msg += "  4. Verify your GCP project has Vertex AI API enabled\n"
+                
+                return (False, error_msg)
             except APIError as e:
-                return (
-                    False,
-                    f"Failed to switch model: {str(e)}. "
-                    "Please check your configuration and try again.",
-                )
+                # T037: Add Helpful Error Messages with troubleshooting
+                error_msg = f"[red]✗ Failed to switch model[/red]\n"
+                error_msg += f"[yellow]Error:[/yellow] {e.message}\n"
+                
+                if e.suggested_fix:
+                    error_msg += f"\n[yellow]Suggested fix:[/yellow]\n"
+                    error_msg += f"  {e.suggested_fix}\n"
+                
+                if e.troubleshooting_steps:
+                    error_msg += "\n[yellow]Troubleshooting steps:[/yellow]\n"
+                    for i, step in enumerate(e.troubleshooting_steps, 1):
+                        error_msg += f"  {i}. {step}\n"
+                
+                return (False, error_msg)
             except Exception as e:
                 return (
                     False,
@@ -653,14 +793,15 @@ class ModelInteractiveMenu:
         # Switch model (T023, T024, T025)
         success, message = self._switch_model(selected_model_id)
         
-        # Show feedback (T026: Success/Error Feedback)
+        # T037: Show feedback with Rich formatting (T026: Success/Error Feedback)
         if success:
             self.console.print(f"\n[bold green]✓ {message}[/bold green]")
             return selected_model_id
         else:
-            self.console.print(f"\n[bold red]✗ {message}[/bold red]")
+            # Error message already formatted with Rich markup
+            self.console.print(f"\n{message}")
             self.console.print(
-                "[yellow]Model switch failed. Current model unchanged.[/yellow]"
+                "[yellow]⚠ Model switch failed. Current model unchanged.[/yellow]"
             )
             return None
 

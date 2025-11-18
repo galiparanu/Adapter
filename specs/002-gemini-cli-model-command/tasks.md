@@ -865,7 +865,7 @@
 
 ### T033: Handle Missing Models Gracefully
 
-**Status**: [ ]  
+**Status**: [x]  
 **Dependencies**: T015-T032  
 **Description**:
 
@@ -880,13 +880,15 @@
 
 **Acceptance**:
 
-- [ ] Missing model handled
-- [ ] Error message clear
-- [ ] No crashes
+- [x] Missing model handled
+- [x] Error message clear
+- [x] No crashes
+
+**Notes**: Added graceful handling in __init__ (try/except for ModelRegistry), _switch_model (lists available models), and run() (shows helpful error with troubleshooting steps). All error messages formatted with Rich.
 
 ### T034: Handle Authentication Errors
 
-**Status**: [ ]  
+**Status**: [x]  
 **Dependencies**: T015-T032  
 **Description**:
 
@@ -901,13 +903,15 @@
 
 **Acceptance**:
 
-- [ ] Auth errors handled
-- [ ] Error message helpful
-- [ ] Troubleshooting provided
+- [x] Auth errors handled
+- [x] Error message helpful
+- [x] Troubleshooting provided
+
+**Notes**: Added gcloud CLI check using subprocess.run() before authentication. Enhanced AuthenticationError handling with Rich-formatted messages including suggested fixes and 4-step troubleshooting guide. Handles FileNotFoundError and TimeoutExpired gracefully.
 
 ### T035: Handle Unsupported Terminals
 
-**Status**: [ ]  
+**Status**: [x]  
 **Dependencies**: T015-T032  
 **Description**:
 
@@ -922,13 +926,15 @@
 
 **Acceptance**:
 
-- [ ] Terminal detection works
-- [ ] Fallback works
-- [ ] Warning shown
+- [x] Terminal detection works
+- [x] Fallback works
+- [x] Warning shown
+
+**Notes**: Enhanced _check_terminal_support() to check terminal size (minimum 80x24 per FR-011). Added warning message in _simple_text_menu() when terminal doesn't support interactive mode. Improved simple menu with better error handling and Rich formatting.
 
 ### T036: Handle Keyboard Interrupts
 
-**Status**: [ ]  
+**Status**: [x]  
 **Dependencies**: T015-T032  
 **Description**:
 
@@ -943,13 +949,15 @@
 
 **Acceptance**:
 
-- [ ] Interrupts handled
-- [ ] Clean exit
-- [ ] Terminal state preserved
+- [x] Interrupts handled
+- [x] Clean exit
+- [x] Terminal state preserved
+
+**Notes**: Added KeyboardInterrupt handling in run() (both in main loop and outer try/except), _simple_text_menu() (with cancellation message), and all keypress handlers. All handlers show friendly "Selection cancelled by user" message with Rich formatting.
 
 ### T037: Add Helpful Error Messages
 
-**Status**: [ ]  
+**Status**: [x]  
 **Dependencies**: T033-T036  
 **Description**:
 
@@ -964,13 +972,15 @@
 
 **Acceptance**:
 
-- [ ] Messages clear
-- [ ] Troubleshooting included
-- [ ] Actionable advice
+- [x] Messages clear
+- [x] Troubleshooting included
+- [x] Actionable advice
+
+**Notes**: All error messages now formatted with Rich markup ([red]✗[/red], [yellow]Warning[/yellow], etc.). Enhanced error messages for: ModelNotFoundError (with available regions), AuthenticationError (with 4-step troubleshooting), APIError (with auto-generated troubleshooting steps), ConfigurationError (with file path and permission steps). All messages include "Troubleshooting steps" section with numbered, actionable items.
 
 ### T038: Write Tests for Error Cases
 
-**Status**: [ ]  
+**Status**: [x]  
 **Dependencies**: T033-T037  
 **Description**:
 
@@ -985,9 +995,17 @@
 
 **Acceptance**:
 
-- [ ] All error cases tested
-- [ ] Tests pass
-- [ ] Coverage good
+- [x] All error cases tested
+- [x] Tests pass
+- [x] Coverage good
+
+**Notes**: Created comprehensive test suite (420 lines) with 4 test classes:
+- TestMissingModelsHandling: 3 tests (no models, registry unavailable, switch to non-existent)
+- TestAuthenticationErrors: 2 tests (gcloud not installed, auth failed)
+- TestUnsupportedTerminals: 2 tests (terminal too small, terminal not supported)
+- TestKeyboardInterrupts: 2 tests (interrupt in menu, interrupt in simple menu)
+- TestHelpfulErrorMessages: 2 tests (API error with troubleshooting, config error with troubleshooting)
+Total: 11 tests covering all error scenarios.
 
 ---
 
