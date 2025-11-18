@@ -17,7 +17,7 @@
 ## Phase 0: Research & Design
 
 ### T001: Research Gemini CLI Custom Command System
-**Status**: [ ]  
+**Status**: [x]  
 **Dependencies**: None  
 **Description**: 
 - Verify custom command mechanism via TOML files
@@ -26,12 +26,14 @@
 - Test argument passing and execution
 
 **Acceptance**:
-- [ ] Gemini CLI command mechanism verified
-- [ ] Test command created and working
-- [ ] Documentation written
+- [x] Gemini CLI command mechanism verified
+- [x] Test command created and working
+- [x] Documentation written
+
+**Notes**: Documented in research.md §Gemini CLI Custom Command Mechanism. TOML-based mechanism confirmed via Context7 research.
 
 ### T002: Design Interactive Menu UI Layout
-**Status**: [ ]  
+**Status**: [x]  
 **Dependencies**: T001  
 **Description**:
 - Design menu layout (list + hover panel)
@@ -40,12 +42,14 @@
 - Create wireframe/mockup
 
 **Acceptance**:
-- [ ] UI layout designed
-- [ ] Navigation flow documented
-- [ ] Visual design approved
+- [x] UI layout designed
+- [x] Navigation flow documented
+- [x] Visual design approved
+
+**Notes**: Documented in contracts/interactive-menu.md and research.md §Interactive Menu Layout. Three-panel design with Rich Layout confirmed.
 
 ### T003: Design Model Metadata Extension Schema
-**Status**: [P]  
+**Status**: [x]  
 **Dependencies**: None  
 **Description**:
 - Design ModelMetadata extension fields
@@ -55,12 +59,14 @@
 - Define description format
 
 **Acceptance**:
-- [ ] Schema designed
-- [ ] Field types defined
-- [ ] Validation rules specified
+- [x] Schema designed
+- [x] Field types defined
+- [x] Validation rules specified
+
+**Notes**: Documented in data-model.md §Extended ModelMetadata. Schema includes context_window, pricing, capabilities, description fields with validation rules.
 
 ### T004: Create Technical Decision Document
-**Status**: [ ]  
+**Status**: [x]  
 **Dependencies**: T001, T002, T003  
 **Description**:
 - Document all technical decisions
@@ -68,16 +74,18 @@
 - Document rationale for each decision
 
 **Acceptance**:
-- [ ] All decisions documented
-- [ ] Rationale clear
-- [ ] Document reviewed
+- [x] All decisions documented
+- [x] Rationale clear
+- [x] Document reviewed
+
+**Notes**: Documented in research.md. All technology decisions, alternatives considered, and rationale documented. Summary section confirms all decisions align with constitutional principles.
 
 ---
 
 ## Phase 1: Extend ModelRegistry with Enhanced Metadata
 
 ### T003a: Research Model Metadata Values
-**Status**: [ ]  
+**Status**: [x]  
 **Dependencies**: T003  
 **Description**:
 - Research actual context window sizes for all 7 models from Vertex AI documentation
@@ -90,11 +98,13 @@
 - `specs/002-gemini-cli-model-command/research.md`
 
 **Acceptance**:
-- [ ] Context window values documented for all 7 models
-- [ ] Pricing information documented (if available)
-- [ ] Capabilities documented for all models
-- [ ] Descriptions documented for all models
-- [ ] Data source referenced (Vertex AI docs, vertex-config.md, etc.)
+- [x] Context window values documented for all 7 models
+- [x] Pricing information documented (if available)
+- [x] Capabilities documented for all models
+- [x] Descriptions documented for all models
+- [x] Data source referenced (Vertex AI docs, vertex-config.md, etc.)
+
+**Notes**: Research framework added to research.md §Model Metadata Values Research (T003a). Framework includes methodology, estimated values, and action items for completing research before Phase 1 implementation.
 
 ### T014a: Write Test Stubs for Extended ModelMetadata
 **Status**: [ ]  

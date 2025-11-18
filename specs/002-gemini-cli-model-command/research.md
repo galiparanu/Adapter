@@ -382,3 +382,206 @@ Key decisions:
 
 No "NEEDS CLARIFICATION" items remain. The implementation plan can proceed.
 
+---
+
+## Model Metadata Values Research (T003a)
+
+**Status**: Research Required  
+**Source**: Vertex AI Documentation, Model Provider Documentation, Vertex AI Pricing Pages
+
+This section documents the research findings for actual model metadata values that need to be populated in the ModelRegistry for the 7 supported models.
+
+### Research Methodology
+
+1. **Context Window**: Check Vertex AI model documentation for maximum context length
+2. **Pricing**: Check Vertex AI pricing pages for per-token costs (input/output)
+3. **Capabilities**: Review model provider documentation for specializations
+4. **Description**: Compile use cases and strengths from official documentation
+
+### Model Metadata Values
+
+#### 1. DeepSeek V3.1 (`deepseek-ai/deepseek-v3.1-maas`)
+
+**Context Window**: 
+- **Research Required**: Check DeepSeek V3.1 documentation for context length
+- **Estimated**: TBD (check official docs)
+- **Source**: Vertex AI Model Garden / DeepSeek documentation
+
+**Pricing** (per 1M tokens):
+- **Input**: TBD (research from Vertex AI pricing)
+- **Output**: TBD (research from Vertex AI pricing)
+- **Source**: Vertex AI Pricing page for DeepSeek models
+
+**Capabilities**:
+- **Research Required**: Review DeepSeek V3.1 capabilities
+- **Estimated**: `["general-purpose", "code-generation", "reasoning"]`
+- **Source**: DeepSeek V3.1 release notes / documentation
+
+**Description**:
+- **Research Required**: Compile from official documentation
+- **Estimated**: "Advanced general-purpose model optimized for code generation and complex reasoning tasks"
+- **Source**: DeepSeek V3.1 release notes / documentation
+
+#### 2. Qwen Coder (`qwen/qwen3-coder-480b-a35b-instruct-maas`)
+
+**Context Window**:
+- **Research Required**: Check Qwen Coder documentation
+- **Estimated**: TBD (check official docs)
+- **Source**: Vertex AI Model Garden / Qwen documentation
+
+**Pricing** (per 1M tokens):
+- **Input**: ~$0.10 (from existing metrics.py, verify)
+- **Output**: ~$0.40 (from existing metrics.py, verify)
+- **Source**: Vertex AI Pricing page for Qwen models
+
+**Capabilities**:
+- **Research Required**: Review Qwen Coder specializations
+- **Estimated**: `["code-generation", "debugging", "code-analysis"]`
+- **Source**: Qwen Coder documentation
+
+**Description**:
+- **Research Required**: Compile from official documentation
+- **Estimated**: "Specialized code generation model optimized for programming tasks, debugging, and code analysis"
+- **Source**: Qwen Coder release notes / documentation
+
+#### 3. Gemini 2.5 Pro (`gemini-2.5-pro`)
+
+**Context Window**:
+- **Research Required**: Check Gemini 2.5 Pro documentation
+- **Estimated**: 1M+ tokens (verify from official docs)
+- **Source**: Google AI Studio / Gemini documentation
+
+**Pricing** (per 1M tokens):
+- **Input**: ~$0.50 (from existing metrics.py, verify)
+- **Output**: ~$1.50 (from existing metrics.py, verify)
+- **Source**: Google AI Pricing page
+
+**Capabilities**:
+- **Research Required**: Review Gemini 2.5 Pro capabilities
+- **Estimated**: `["general-purpose", "code-generation", "reasoning", "multimodal"]`
+- **Source**: Gemini 2.5 Pro documentation
+
+**Description**:
+- **Research Required**: Compile from official documentation
+- **Estimated**: "Advanced general-purpose model with strong reasoning capabilities, code generation, and multimodal support"
+- **Source**: Gemini 2.5 Pro release notes / documentation
+
+#### 4. DeepSeek R1 0528 (`deepseek-ai/deepseek-r1-0528-maas`)
+
+**Context Window**:
+- **Research Required**: Check DeepSeek R1 documentation
+- **Estimated**: TBD (check official docs)
+- **Source**: Vertex AI Model Garden / DeepSeek R1 documentation
+
+**Pricing** (per 1M tokens):
+- **Input**: TBD (research from Vertex AI pricing)
+- **Output**: TBD (research from Vertex AI pricing)
+- **Source**: Vertex AI Pricing page for DeepSeek R1
+
+**Capabilities**:
+- **Research Required**: Review DeepSeek R1 specializations
+- **Estimated**: `["reasoning", "problem-solving", "chain-of-thought"]`
+- **Source**: DeepSeek R1 documentation
+
+**Description**:
+- **Research Required**: Compile from official documentation
+- **Estimated**: "Reasoning-focused model with advanced chain-of-thought capabilities for complex problem-solving"
+- **Source**: DeepSeek R1 release notes / documentation
+
+#### 5. Kimi K2 (`moonshotai/kimi-k2-thinking-maas`)
+
+**Context Window**:
+- **Research Required**: Check Kimi K2 documentation
+- **Estimated**: TBD (check official docs, may be 200K+ tokens)
+- **Source**: Vertex AI Model Garden / Moonshot AI documentation
+
+**Pricing** (per 1M tokens):
+- **Input**: TBD (research from Vertex AI pricing)
+- **Output**: TBD (research from Vertex AI pricing)
+- **Source**: Vertex AI Pricing page for Kimi models
+
+**Capabilities**:
+- **Research Required**: Review Kimi K2 specializations
+- **Estimated**: `["reasoning", "thinking", "analysis"]`
+- **Source**: Kimi K2 documentation
+
+**Description**:
+- **Research Required**: Compile from official documentation
+- **Estimated**: "Thinking-focused model optimized for complex reasoning and analysis tasks"
+- **Source**: Kimi K2 release notes / documentation
+
+#### 6. GPT OSS 120B (`openai/gpt-oss-120b-maas`)
+
+**Context Window**:
+- **Research Required**: Check GPT OSS 120B documentation
+- **Estimated**: TBD (check official docs)
+- **Source**: Vertex AI Model Garden / OpenAI OSS documentation
+
+**Pricing** (per 1M tokens):
+- **Input**: TBD (research from Vertex AI pricing)
+- **Output**: TBD (research from Vertex AI pricing)
+- **Source**: Vertex AI Pricing page for GPT OSS models
+
+**Capabilities**:
+- **Research Required**: Review GPT OSS 120B capabilities
+- **Estimated**: `["general-purpose", "large-scale"]`
+- **Source**: GPT OSS 120B documentation
+
+**Description**:
+- **Research Required**: Compile from official documentation
+- **Estimated**: "Large-scale open-source model for general-purpose tasks"
+- **Source**: GPT OSS 120B release notes / documentation
+
+#### 7. Llama 3.1 (`meta/llama-3.1-405b-instruct-maas`)
+
+**Context Window**:
+- **Research Required**: Check Llama 3.1 405B documentation
+- **Estimated**: TBD (check official docs, may be 128K+ tokens)
+- **Source**: Vertex AI Model Garden / Meta Llama documentation
+
+**Pricing** (per 1M tokens):
+- **Input**: TBD (research from Vertex AI pricing)
+- **Output**: TBD (research from Vertex AI pricing)
+- **Source**: Vertex AI Pricing page for Llama models
+
+**Capabilities**:
+- **Research Required**: Review Llama 3.1 405B capabilities
+- **Estimated**: `["general-purpose", "instruction-following", "conversation"]`
+- **Source**: Llama 3.1 documentation
+
+**Description**:
+- **Research Required**: Compile from official documentation
+- **Estimated**: "Large-scale instruction-tuned model optimized for following instructions and general conversation"
+- **Source**: Llama 3.1 release notes / documentation
+
+### Research Action Items
+
+1. **Access Vertex AI Documentation**:
+   - Visit Vertex AI Model Garden for each model
+   - Check model-specific documentation pages
+   - Review pricing pages for accurate cost information
+
+2. **Verify Existing Data**:
+   - Cross-reference pricing in `vertex_spec_adapter/utils/metrics.py`
+   - Update if pricing has changed
+   - Add missing models to pricing data
+
+3. **Document Findings**:
+   - Update this section with actual values
+   - Add source URLs for verification
+   - Note any discrepancies or uncertainties
+
+4. **Implementation**:
+   - Populate ModelRegistry with researched values
+   - Ensure all 7 models have complete metadata
+   - Validate data format matches ModelMetadata schema
+
+### Notes
+
+- **Pricing**: Values may change over time, should be updated periodically
+- **Context Window**: May vary by region or deployment
+- **Capabilities**: Should be based on official model documentation, not assumptions
+- **Description**: Should be concise but informative for user decision-making
+
+**Next Steps**: Complete research before Phase 1 implementation to ensure accurate model metadata.
+
