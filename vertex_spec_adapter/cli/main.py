@@ -97,19 +97,18 @@ def list_models(
     console.print("This will be available in Phase 4: Model Registry")
 
 
-@app.command("run")
-def run_command(
-    command: str = typer.Argument(..., help="Spec Kit command to run"),
-    model: Optional[str] = typer.Option(None, "--model", help="Override default model"),
-    region: Optional[str] = typer.Option(None, "--region", help="Override default region"),
-    stream: bool = typer.Option(False, "--stream", help="Stream response"),
-) -> None:
-    """
-    Execute Spec Kit command with Vertex AI.
-    """
-    # TODO: Implement in Phase 5
-    console.print("[yellow]Run command not yet implemented[/yellow]")
-    console.print("This will be available in Phase 5: Spec Kit Integration")
+# Import run commands
+from vertex_spec_adapter.cli.commands import run
+
+# Create run command group
+run_app = typer.Typer(name="run", help="Execute Spec Kit commands with Vertex AI")
+run_app.command("constitution")(run.run_constitution)
+run_app.command("specify")(run.run_specify)
+run_app.command("plan")(run.run_plan)
+run_app.command("tasks")(run.run_tasks)
+run_app.command("implement")(run.run_implement)
+
+app.add_typer(run_app)
 
 
 def cli() -> None:
