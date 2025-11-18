@@ -21,6 +21,7 @@
 ## Dependencies & Story Completion Order
 
 **Story Dependencies**:
+
 - US1 (Quick Setup) - Can be implemented independently, enables all other stories
 - US2 (Enterprise Auth) - Depends on US1 (needs config), can be parallel with US5
 - US5 (Spec Kit Integration) - Depends on US1 (needs config), can be parallel with US2
@@ -30,6 +31,7 @@
 **Recommended MVP**: US1 → US2 + US5 (parallel) → US3 → US4
 
 **Parallel Execution Examples**:
+
 - US1: T001-T010 can run in parallel groups (setup, config, CLI)
 - US2: T011-T025 can run in parallel groups (auth, logging, metrics)
 - US5: T026-T045 can run in parallel groups (bridge, commands, Git)
@@ -40,16 +42,16 @@
 
 **Purpose**: Project initialization and basic structure
 
-- [ ] T001 Create project structure per implementation plan in vertex_spec_adapter/
-- [ ] T002 [P] Create pyproject.toml with project metadata and dependencies in repository root
-- [ ] T003 [P] Create pytest.ini or configure pytest in pyproject.toml for test configuration
-- [ ] T004 [P] Create .pre-commit-config.yaml with hooks for ruff, mypy, bandit in repository root
-- [ ] T005 [P] Create tox.ini for multi-environment testing in repository root
-- [ ] T006 [P] Create .github/workflows/ci.yml for GitHub Actions in repository root
-- [ ] T007 [P] Create README.md with project overview in repository root
-- [ ] T008 [P] Create .gitignore with Python and project-specific ignores in repository root
-- [ ] T009 [P] Create tests/conftest.py with pytest configuration and shared fixtures in tests/
-- [ ] T010 [P] Create tests/fixtures/responses/ directory for mock API responses in tests/fixtures/
+- [x] T001 Create project structure per implementation plan in vertex_spec_adapter/
+- [x] T002 [P] Create pyproject.toml with project metadata and dependencies in repository root
+- [x] T003 [P] Create pytest.ini or configure pytest in pyproject.toml for test configuration
+- [x] T004 [P] Create .pre-commit-config.yaml with hooks for ruff, mypy, bandit in repository root
+- [x] T005 [P] Create tox.ini for multi-environment testing in repository root
+- [x] T006 [P] Create .github/workflows/ci.yml for GitHub Actions in repository root
+- [x] T007 [P] Create README.md with project overview in repository root
+- [x] T008 [P] Create .gitignore with Python and project-specific ignores in repository root
+- [x] T009 [P] Create tests/conftest.py with pytest configuration and shared fixtures in tests/
+- [x] T010 [P] Create tests/fixtures/responses/ directory for mock API responses in tests/fixtures/
 
 ## Phase 2: Foundational (Blocking Prerequisites)
 
@@ -267,6 +269,7 @@
 **Phase 1 MVP**: User Story 1 (Quick Setup) + User Story 2 (Enterprise Auth) + User Story 5 (Spec Kit Integration)
 
 This delivers:
+
 - Working setup process
 - Authentication with multiple methods
 - All five Spec Kit commands functional
@@ -274,6 +277,7 @@ This delivers:
 - Core functionality complete
 
 **Incremental Delivery**:
+
 1. **Week 1**: Setup + Foundational + US1 (Quick Setup)
 2. **Week 2**: US2 (Enterprise Auth) + US5 (Spec Kit Integration) - can be parallel
 3. **Week 3**: US3 (Model Flexibility) + US4 (Error Recovery) - can be parallel
@@ -283,30 +287,36 @@ This delivers:
 ### Parallel Execution Opportunities
 
 **Within US1**:
+
 - T002-T010: All setup files can be created in parallel
 - T036-T040: Config management tasks can be parallel
 - T041-T057: CLI tasks can be parallel after main entry point
 
 **Within US2**:
+
 - T063-T071: Auth implementation tasks can be parallel
 - T072-T077: Metrics and logging can be parallel
 
 **Within US5**:
+
 - T086-T094: Client implementation can be parallel
 - T095-T106: Bridge and templates can be parallel
 - T107-T112: CLI commands can be parallel
 
 **Within US3**:
+
 - T121-T130: Model registry tasks can be parallel
 - T131-T133: CLI models command can be parallel
 
 **Within US4**:
+
 - T138-T142: Retry and circuit breaker can be parallel
 - T143-T150: Integration tasks can be parallel
 
 ### Testing Strategy
 
 **Unit Tests** (Fast, isolated):
+
 - Mock all external dependencies (Vertex AI API, file system, network)
 - Test each function/class in isolation
 - Cover happy path, edge cases, and error scenarios
@@ -314,6 +324,7 @@ This delivers:
 - Parametrized tests for multiple input scenarios
 
 **Integration Tests** (Slower, real dependencies):
+
 - Test actual Vertex AI API calls (use test project/credits)
 - Test authentication flow with real GCP credentials
 - Test model availability checks
@@ -321,6 +332,7 @@ This delivers:
 - Use VCR.py to record/replay HTTP interactions
 
 **E2E Tests** (Complete workflow):
+
 - Test full Spec Kit workflow from init to implement
 - Validate file creation and Git operations
 - Test all five Spec Kit commands with real model
@@ -329,6 +341,7 @@ This delivers:
 ### Quality Gates
 
 **Before proceeding to next phase**:
+
 - All unit tests passing
 - Code coverage meets target for that component
 - Code review completed
@@ -336,10 +349,10 @@ This delivers:
 - No critical security issues
 
 **Before release**:
+
 - Overall test coverage ≥ 80%
 - All tests passing on all platforms
 - Security scan passing
 - Performance benchmarks met
 - Documentation complete
 - Manual testing completed
-
