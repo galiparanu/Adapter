@@ -419,7 +419,7 @@
 
 ### T015: Create Interactive Menu Base Class
 
-**Status**: [ ]  
+**Status**: [x]  
 **Dependencies**: T002, T014  
 **Description**:
 
@@ -434,13 +434,15 @@
 
 **Acceptance**:
 
-- [ ] Class created
-- [ ] Console initialized
-- [ ] Basic structure works
+- [x] Class created
+- [x] Console initialized
+- [x] Basic structure works
+
+**Notes**: Created ModelInteractiveMenu class with initialization, state management (selected_index, hover_details_model_id), and model loading from ModelRegistry. Console initialized with Rich.
 
 ### T016: Implement Model List Rendering
 
-**Status**: [ ]  
+**Status**: [x]  
 **Dependencies**: T015  
 **Description**:
 
@@ -456,14 +458,16 @@
 
 **Acceptance**:
 
-- [ ] List renders correctly
-- [ ] Current model marked
-- [ ] Selection highlighted
-- [ ] Scrolling works
+- [x] List renders correctly
+- [x] Current model marked
+- [x] Selection highlighted
+- [x] Scrolling works
+
+**Notes**: Implemented _format_model_list() with selection indicator (▶), current model indicator (✓), and highlighted selection. Models sorted alphabetically per FR-004.
 
 ### T017: Implement Keyboard Navigation
 
-**Status**: [ ]  
+**Status**: [x]  
 **Dependencies**: T016  
 **Description**:
 
@@ -479,13 +483,15 @@
 
 **Acceptance**:
 
-- [ ] All keys work
-- [ ] Navigation is smooth
-- [ ] No lag or jank
+- [x] All keys work
+- [x] Navigation is smooth
+- [x] No lag or jank
+
+**Notes**: Implemented _handle_keypress() and _get_key() with cross-platform support (Unix/Linux/Mac with termios, Windows with msvcrt). All keys (up, down, enter, escape, home, end) work correctly. Uses Rich Live for smooth updates.
 
 ### T018: Implement Hover Details Panel
 
-**Status**: [ ]  
+**Status**: [x]  
 **Dependencies**: T016  
 **Description**:
 
@@ -502,14 +508,16 @@
 
 **Acceptance**:
 
-- [ ] Details display correctly
-- [ ] Updates in real-time
-- [ ] Formatting is clear
-- [ ] All fields shown (except region/provider/access_pattern)
+- [x] Details display correctly
+- [x] Updates in real-time
+- [x] Formatting is clear
+- [x] All fields shown (except region/provider/access_pattern)
+
+**Notes**: Implemented _format_hover_details() showing Model Name & ID, Context Window, Pricing, Capabilities, Status, and Description. Explicitly excludes Region, Access Pattern, and Provider per requirements. Updates in real-time as user navigates.
 
 ### T019: Implement Current Model Display
 
-**Status**: [ ]  
+**Status**: [x]  
 **Dependencies**: T015  
 **Description**:
 
@@ -524,13 +532,15 @@
 
 **Acceptance**:
 
-- [ ] Current model displayed
-- [ ] Format is clear
-- [ ] Updates correctly
+- [x] Current model displayed
+- [x] Format is clear
+- [x] Updates correctly
+
+**Notes**: Implemented _format_current_model() displaying current model name and ID in top panel. Shows "None" if no current model, or "(not in available models)" if current model not found in registry.
 
 ### T020: Implement Menu Layout with Rich Layout
 
-**Status**: [ ]  
+**Status**: [x]  
 **Dependencies**: T016, T018, T019  
 **Description**:
 
@@ -546,14 +556,16 @@
 
 **Acceptance**:
 
-- [ ] Layout works correctly
-- [ ] Responsive to terminal size
-- [ ] All panels visible
-- [ ] Looks polished
+- [x] Layout works correctly
+- [x] Responsive to terminal size
+- [x] All panels visible
+- [x] Looks polished
+
+**Notes**: Implemented _render_menu() using Rich Layout with three-panel structure: top (current model), left (model list), right (hover details). Uses Rich Live for real-time updates. Responsive to terminal size with ratio-based layout.
 
 ### T021: Write Unit Tests for Menu Component
 
-**Status**: [ ]  
+**Status**: [x]  
 **Dependencies**: T015-T020  
 **Description**:
 
@@ -569,9 +581,11 @@
 
 **Acceptance**:
 
-- [ ] All tests pass
-- [ ] Coverage ≥ 80%
-- [ ] Mocks work correctly
+- [x] All tests pass
+- [x] Coverage ≥ 80%
+- [x] Mocks work correctly
+
+**Notes**: Created comprehensive test suite with 352 lines covering initialization (default, custom config_path, custom console, error handling), rendering, keyboard navigation (up, down, enter, escape, home, end), hover details formatting (with/without None fields), and current model display. All tests use proper mocking.
 
 ---
 
