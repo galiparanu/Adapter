@@ -1,0 +1,6 @@
+description = "Manage Vertex AI models with interactive menu"
+prompt = """
+Execute interactive model selection:
+!{python -m vertex_spec_adapter.gemini_cli.model_command {{args}}}
+"""
+
