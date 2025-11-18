@@ -153,41 +153,41 @@
 
 **Independent Test**: Execute complete workflow (constitution → specify → plan → tasks → implement) and verify all artifacts created correctly
 
-- [ ] T086 [US5] Create base VertexAIClient class in vertex_spec_adapter/core/client.py
-- [ ] T087 [US5] Implement model provider detection (MaaS vs Native SDK) in vertex_spec_adapter/core/client.py
-- [ ] T088 [US5] Implement Claude model support via anthropic[vertex] SDK in vertex_spec_adapter/core/client.py
-- [ ] T089 [US5] Implement Gemini model support via google-cloud-aiplatform SDK in vertex_spec_adapter/core/client.py
-- [ ] T090 [US5] Implement Qwen model support via MaaS REST API in vertex_spec_adapter/core/client.py
-- [ ] T091 [US5] Implement generate method with unified interface in vertex_spec_adapter/core/client.py
-- [ ] T092 [US5] Implement generate_stream method for streaming responses in vertex_spec_adapter/core/client.py
-- [ ] T093 [US5] Implement response normalization across model types in vertex_spec_adapter/core/client.py
-- [ ] T094 [US5] Implement token counting and tracking in vertex_spec_adapter/core/client.py
-- [ ] T095 [US5] Create SpecKitBridge class in vertex_spec_adapter/speckit/bridge.py
-- [ ] T096 [US5] Implement handle_constitution method in vertex_spec_adapter/speckit/bridge.py
-- [ ] T097 [US5] Implement handle_specify method in vertex_spec_adapter/speckit/bridge.py
-- [ ] T098 [US5] Implement handle_plan method in vertex_spec_adapter/speckit/bridge.py
-- [ ] T099 [US5] Implement handle_tasks method in vertex_spec_adapter/speckit/bridge.py
-- [ ] T100 [US5] Implement handle_implement method in vertex_spec_adapter/speckit/bridge.py
-- [ ] T101 [US5] Create template management module in vertex_spec_adapter/speckit/templates.py
-- [ ] T102 [US5] Implement Spec Kit template loading in vertex_spec_adapter/speckit/templates.py
-- [ ] T103 [US5] Implement Git operations support in vertex_spec_adapter/speckit/bridge.py
-- [ ] T104 [US5] Implement create_feature_branch method in vertex_spec_adapter/speckit/bridge.py
-- [ ] T105 [US5] Implement file structure management for Spec Kit artifacts in vertex_spec_adapter/speckit/bridge.py
-- [ ] T106 [US5] Implement create_speckit_file method with validation in vertex_spec_adapter/speckit/bridge.py
-- [ ] T107 [US5] Create run command handler for Spec Kit commands in vertex_spec_adapter/cli/commands/run.py
-- [ ] T108 [US5] Implement run constitution subcommand in vertex_spec_adapter/cli/commands/run.py
-- [ ] T109 [US5] Implement run specify subcommand in vertex_spec_adapter/cli/commands/run.py
-- [ ] T110 [US5] Implement run plan subcommand in vertex_spec_adapter/cli/commands/run.py
-- [ ] T111 [US5] Implement run tasks subcommand in vertex_spec_adapter/cli/commands/run.py
-- [ ] T112 [US5] Implement run implement subcommand in vertex_spec_adapter/cli/commands/run.py
-- [ ] T113 [US5] Create unit tests for VertexAIClient in tests/unit/test_client.py
-- [ ] T114 [US5] Create unit tests for model provider detection in tests/unit/test_client.py
-- [ ] T115 [US5] Create unit tests for response normalization in tests/unit/test_client.py
-- [ ] T116 [US5] Create unit tests for SpecKitBridge in tests/unit/test_bridge.py
-- [ ] T117 [US5] Create unit tests for Git operations in tests/unit/test_bridge.py
-- [ ] T118 [US5] Create integration tests for Vertex AI API calls in tests/integration/test_vertex_api.py
-- [ ] T119 [US5] Create integration tests for Spec Kit workflow in tests/integration/test_speckit_integration.py
-- [ ] T120 [US5] Create E2E test for complete workflow in tests/e2e/test_complete_workflow.py
+- [x] T086 [US5] Create base VertexAIClient class in vertex_spec_adapter/core/client.py
+- [x] T087 [US5] Implement model provider detection (MaaS vs Native SDK) in vertex_spec_adapter/core/client.py
+- [x] T088 [US5] Implement Claude model support via anthropic[vertex] SDK in vertex_spec_adapter/core/client.py
+- [x] T089 [US5] Implement Gemini model support via google-cloud-aiplatform SDK in vertex_spec_adapter/core/client.py
+- [x] T090 [US5] Implement Qwen model support via MaaS REST API in vertex_spec_adapter/core/client.py
+- [x] T091 [US5] Implement generate method with unified interface in vertex_spec_adapter/core/client.py
+- [x] T092 [US5] Implement generate_stream method for streaming responses in vertex_spec_adapter/core/client.py
+- [x] T093 [US5] Implement response normalization across model types in vertex_spec_adapter/core/client.py
+- [x] T094 [US5] Implement token counting and tracking in vertex_spec_adapter/core/client.py
+- [x] T095 [US5] Create SpecKitBridge class in vertex_spec_adapter/speckit/bridge.py
+- [x] T096 [US5] Implement handle_constitution method in vertex_spec_adapter/speckit/bridge.py
+- [x] T097 [US5] Implement handle_specify method in vertex_spec_adapter/speckit/bridge.py
+- [x] T098 [US5] Implement handle_plan method in vertex_spec_adapter/speckit/bridge.py
+- [x] T099 [US5] Implement handle_tasks method in vertex_spec_adapter/speckit/bridge.py
+- [x] T100 [US5] Implement handle_implement method in vertex_spec_adapter/speckit/bridge.py
+- [x] T101 [US5] Create template management module in vertex_spec_adapter/speckit/templates.py
+- [x] T102 [US5] Implement Spec Kit template loading in vertex_spec_adapter/speckit/templates.py
+- [x] T103 [US5] Implement Git operations support in vertex_spec_adapter/speckit/bridge.py
+- [x] T104 [US5] Implement create_feature_branch method in vertex_spec_adapter/speckit/bridge.py
+- [x] T105 [US5] Implement file structure management for Spec Kit artifacts in vertex_spec_adapter/speckit/bridge.py
+- [x] T106 [US5] Implement create_speckit_file method with validation in vertex_spec_adapter/speckit/bridge.py
+- [x] T107 [US5] Create run command handler for Spec Kit commands in vertex_spec_adapter/cli/commands/run.py
+- [x] T108 [US5] Implement run constitution subcommand in vertex_spec_adapter/cli/commands/run.py
+- [x] T109 [US5] Implement run specify subcommand in vertex_spec_adapter/cli/commands/run.py
+- [x] T110 [US5] Implement run plan subcommand in vertex_spec_adapter/cli/commands/run.py
+- [x] T111 [US5] Implement run tasks subcommand in vertex_spec_adapter/cli/commands/run.py
+- [x] T112 [US5] Implement run implement subcommand in vertex_spec_adapter/cli/commands/run.py
+- [x] T113 [US5] Create unit tests for VertexAIClient in tests/unit/test_client.py
+- [x] T114 [US5] Create unit tests for model provider detection in tests/unit/test_client.py
+- [x] T115 [US5] Create unit tests for response normalization in tests/unit/test_client.py
+- [x] T116 [US5] Create unit tests for SpecKitBridge in tests/unit/test_bridge.py
+- [x] T117 [US5] Create unit tests for Git operations in tests/unit/test_bridge.py
+- [x] T118 [US5] Create integration tests for Vertex AI API calls in tests/integration/test_vertex_api.py
+- [x] T119 [US5] Create integration tests for Spec Kit workflow in tests/integration/test_speckit_integration.py
+- [x] T120 [US5] Create E2E test for complete workflow in tests/e2e/test_complete_workflow.py
 
 ## Phase 6: User Story 3 - Model Flexibility and Switching (P2)
 
